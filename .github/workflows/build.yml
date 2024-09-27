@@ -53,7 +53,8 @@ jobs:
         run: npm ci
 
       - name: Lint
-        run: npm run lint
+        #run: npm run lint
+        run: npx eslint . --config eslint.config.js
 
   format:
     timeout-minutes: 5
