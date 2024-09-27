@@ -1,8 +1,7 @@
-# from https://github.com/google/blockly/blob/505f28f1a5bf5b8ad65a1b7f333c98671a331996/.github/workflows/build.yml
-# This workflow will do a clean install, start the selenium server, and run
-# all of our tests.
+# from https://github.com/google/blockly-samples/blob/7a30c6c67a1e743bd8ed7270011bb92144e02d5b/.github/workflows/build.yml
+# This workflow will lint, build and test Blockly samples.
 
-name: Node.js CI
+name: Build and Test
 
 on: [pull_request]
 
@@ -12,44 +11,26 @@ permissions:
 jobs:
   build:
     timeout-minutes: 10
-    runs-on: ${{ matrix.os }}
-
+    runs-on: ubuntu-latest
     strategy:
       matrix:
-        # TODO (#2114): re-enable osx build.
-        # os: [ubuntu-latest, macos-latest]
-        os: [ubuntu-latest]
         node-version: [18.x, 20.x, 22.x]
-        # See supported Node.js release schedule at
-        # https://nodejs.org/en/about/releases/
-
     steps:
       - uses: actions/checkout@v4
-        with:
-          persist-credentials: false
-
-      - name: Reconfigure git to use HTTP authentication
-        run: >
-          git config --global url."https://github.com/".insteadOf
-          ssh://git@github.com/
 
       - name: Use Node.js ${{ matrix.node-version }}
         uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
 
-      - name: Npm Clean Install
+      - name: Npm CI
         run: npm ci
 
-      - name: Linux Test Setup
-        if: runner.os == 'Linux'
-        run: source ./tests/scripts/setup_linux_env.sh
+      - name: Build
+        run: npm run build
 
-      - name: Run
+      - name: Test
         run: npm run test
-
-        env:
-          CI: true
 
   lint:
     timeout-minutes: 5
@@ -57,13 +38,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node.js 20.x
+      - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 20
 
-      - name: Npm Install
-        run: npm install
+      - name: Npm CI
+        run: npm ci
 
       - name: Lint
         run: npm run lint
@@ -74,13 +55,13 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Use Node.js 20.x
+      - name: Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 20.x
+          node-version: 20
 
-      - name: Npm Install
-        run: npm install
+      - name: Npm CI
+        run: npm ci
 
       - name: Check Format
         run: npm run format:check
