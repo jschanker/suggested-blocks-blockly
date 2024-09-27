@@ -1,0 +1,78 @@
+# from https://github.com/google/blockly-samples/blob/7a30c6c67a1e743bd8ed7270011bb92144e02d5b/.github/workflows/build.yml
+# This workflow will lint, build and test Blockly samples.
+
+name: Build and Test
+
+on: [pull_request]
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [18.x, 20.x, 22.x]
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: NPM install
+        run: npm install
+        
+      - name: Npm CI
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Test
+        run: npm run test
+
+  lint:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: NPM install
+        run: npm install
+        
+      - name: Npm CI
+        run: npm ci
+
+      - name: Lint
+        #run: npm run lint
+        run: npx eslint . --config eslint.config.js
+
+  format:
+    timeout-minutes: 5
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: NPM install
+        run: npm install
+
+      - name: Npm CI
+        run: npm ci
+
+      - name: Check Format
+        #run: npm run format:check
+        run: npx prettier --check .
