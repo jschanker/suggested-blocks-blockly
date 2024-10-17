@@ -28,3 +28,7 @@ PULL_REQUEST_TEMPLATE.md
 
 # Don't bother formatting JavaScript files we're about to migrate:
 /generators/**/*.js
+
+# GitHub workflows, config files
+.eslintrc.js
+.github/*
