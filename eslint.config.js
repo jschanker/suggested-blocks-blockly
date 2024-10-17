@@ -19,6 +19,7 @@ const compat = new FlatCompat();
 module.exports = [
   {
     ignores: [
+      '.eslintrc.js',
       'codelabs/',
       'gh-pages/',
       'examples/backpack-demo',
