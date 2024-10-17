@@ -26,3 +26,7 @@
 /scripts/gulpfiles/*
 CHANGELOG.md
 PULL_REQUEST_TEMPLATE.md
+
+# Other
+.eslintrc.js
+.github/workflows/*
