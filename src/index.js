@@ -24,6 +24,9 @@ export class BlockSuggestor {
    * @param {number} numBlocksPerCategory the size of each toolbox category
    */
   constructor(numBlocksPerCategory) {
+    /**
+    * Sets the model to null
+    */
     this.model = null;
     /**
      * Saves the full JSON data for each block type the first time it's used.
@@ -56,16 +59,16 @@ export class BlockSuggestor {
   }
 
   getSuggestedBlocks = function () {
-    let inputSource = '';
+    let description = '';
 
-    if (typeof this.inputSource === 'string') {
-      inputSource = this.inputSource;
-    } else if (this.inputSource instanceof Element) {
-      inputSource = this.inputSource.value || this.inputSource.innerText || '';
+    if (typeof this.description === 'string') {
+      description = this.description;
+    } else if (this.description instanceof Element) {
+      description = this.description.value || this.description.innerText || '';
     }
 
     const suggestedBlocks = this.model
-      ? this.model.getSuggestedBlocks(inputSource)
+      ? this.model.getSuggestedBlocks(description)
       : [];
 
     const blockTypes = suggestedBlocks.map((block) => block.type);
