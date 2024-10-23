@@ -25,6 +25,10 @@ export class BlockSuggestor {
    */
   constructor(numBlocksPerCategory) {
     /**
+    * Sets the model to null
+    */
+    this.model = null;
+    /**
      * Saves the full JSON data for each block type the first time it's used.
      * This helps store what initial configuration / sub-blocks each block type
      * would be expected to have.
@@ -49,6 +53,27 @@ export class BlockSuggestor {
     this.getRecentlyUsed = this.getRecentlyUsed.bind(this);
     this.generateBlockData = this.generateBlockData.bind(this);
   }
+
+  setModel(model) {
+    this.model = model;
+  }
+
+  getSuggestedBlocks = function () {
+    let description = '';
+
+    if (typeof this.description === 'string') {
+      description = this.description;
+    } else if (this.description instanceof Element) {
+      description = this.description.value || this.description.innerText || '';
+    }
+
+    const suggestedBlocks = this.model
+      ? this.model.getSuggestedBlocks(description)
+      : [];
+
+    const blockTypes = suggestedBlocks.map((block) => block.type);
+    return this.generateBlockData(blockTypes);
+  };
 
   /**
    * Generates a list of the 10 most frequently used blocks, in order.
@@ -191,6 +216,10 @@ export const init = function (
   waitForFinishedLoading = true,
 ) {
   const suggestor = new BlockSuggestor(numBlocksPerCategory);
+  workspace.registerToolboxCategoryCallback(
+    'AI_SUGGESTED',
+    suggestor.getSuggestedBlocks,
+  );
   workspace.registerToolboxCategoryCallback('MOST_USED', suggestor.getMostUsed);
   workspace.registerToolboxCategoryCallback(
     'RECENTLY_USED',
@@ -250,3 +279,4 @@ Blockly.serialization.registry.register(
   'suggested-blocks', // Name
   new BlockSuggestorSerializer(),
 );
+
