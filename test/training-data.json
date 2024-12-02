@@ -1,0 +1,571 @@
+[
+{
+    "description": "Print a message",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "text_print",
+          "id": "S):UDQqP4)zd[mhVH673",
+          "x": 63,
+          "y": 63,
+          "inputs": {
+            "TEXT": {
+              "shadow": {
+                "type": "text",
+                "id": "D[Ek:}A5)O7ja}~r2e%A",
+                "fields": {
+                  "TEXT": "Hello!"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "description": "Add two numbers",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "math_number",
+          "id": "1",
+          "x": 63,
+          "y": 63,
+          "fields": {
+            "NUM": 7
+          }
+        },
+        {
+          "type": "math_number",
+          "id": "2",
+          "x": 63,
+          "y": 113,
+          "fields": {
+            "NUM": 5
+          }
+        },
+        {
+          "type": "math_arithmetic",
+          "id": "3",
+          "x": 63,
+          "y": 163,
+          "inputs": {
+            "A": {
+              "shadow": {
+                "type": "math_number",
+                "id": "4",
+                "fields": {
+                  "NUM": 7
+                }
+              }
+            },
+            "B": {
+              "shadow": {
+                "type": "math_number",
+                "id": "5",
+                "fields": {
+                  "NUM": 5
+                }
+              }
+            }
+          },
+          "fields": {
+            "OP": "ADD"
+          }
+        },
+        {
+          "type": "text_print",
+          "id": "6",
+          "x": 63,
+          "y": 213,
+          "inputs": {
+            "TEXT": {
+              "value": {
+                "type": "math_arithmetic",
+                "id": "3"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "description": "Multiply two numbers",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "math_number",
+          "id": "7",
+          "x": 63,
+          "y": 63,
+          "fields": {
+            "NUM": 4
+          }
+        },
+        {
+          "type": "math_number",
+          "id": "8",
+          "x": 63,
+          "y": 113,
+          "fields": {
+            "NUM": 6
+          }
+        },
+        {
+          "type": "math_arithmetic",
+          "id": "9",
+          "x": 63,
+          "y": 163,
+          "inputs": {
+            "A": {
+              "shadow": {
+                "type": "math_number",
+                "id": "10",
+                "fields": {
+                  "NUM": 4
+                }
+              }
+            },
+            "B": {
+              "shadow": {
+                "type": "math_number",
+                "id": "11",
+                "fields": {
+                  "NUM": 6
+                }
+              }
+            }
+          },
+          "fields": {
+            "OP": "MULTIPLY"
+          }
+        },
+        {
+          "type": "text_print",
+          "id": "12",
+          "x": 63,
+          "y": 213,
+          "inputs": {
+            "TEXT": {
+              "value": {
+                "type": "math_arithmetic",
+                "id": "9"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "description": "Count down from a number",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "controls_for",
+          "id": "13",
+          "x": 63,
+          "y": 63,
+          "inputs": {
+            "FROM": {
+              "shadow": {
+                "type": "math_number",
+                "id": "14",
+                "fields": {
+                  "NUM": 5
+                }
+              }
+            },
+            "TO": {
+              "shadow": {
+                "type": "math_number",
+                "id": "15",
+                "fields": {
+                  "NUM": 1
+                }
+              }
+            },
+            "BY": {
+              "shadow": {
+                "type": "math_number",
+                "id": "16",
+                "fields": {
+                  "NUM": -1
+                }
+              }
+            }
+          },
+          "statements": {
+            "DO": {
+              "type": "text_print",
+              "id": "17",
+              "inputs": {
+                "TEXT": {
+                  "value": {
+                    "type": "variables_get",
+                    "id": "18"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "description": "Check if a number is even or odd",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "math_number",
+          "id": "19",
+          "x": 63,
+          "y": 63,
+          "fields": {
+            "NUM": 9
+          }
+        },
+        {
+          "type": "math_modulo",
+          "id": "20",
+          "x": 63,
+          "y": 113,
+          "inputs": {
+            "DIVIDEND": {
+              "shadow": {
+                "type": "math_number",
+                "id": "21",
+                "fields": {
+                  "NUM": 9
+                }
+              }
+            },
+            "DIVISOR": {
+              "shadow": {
+                "type": "math_number",
+                "id": "22",
+                "fields": {
+                  "NUM": 2
+                }
+              }
+            }
+          }
+        },
+        {
+          "type": "controls_if",
+          "id": "23",
+          "x": 63,
+          "y": 163,
+          "inputs": {
+            "IF0": {
+              "inputs": {
+                "VALUE": {
+                  "value": {
+                    "type": "math_modulo",
+                    "id": "20"
+                  }
+                }
+              }
+            },
+            "DO0": {
+              "type": "text_print",
+              "id": "24",
+              "inputs": {
+                "TEXT": {
+                  "shadow": {
+                    "type": "text",
+                    "id": "25",
+                    "fields": {
+                      "TEXT": "It's Even!"
+                    }
+                  }
+                }
+              }
+            },
+            "ELSE": {
+              "type": "text_print",
+              "id": "26",
+              "inputs": {
+                "TEXT": {
+                  "shadow": {
+                    "type": "text",
+                    "id": "27",
+                    "fields": {
+                      "TEXT": "It's Odd!"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "description": "Join two text messages",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "text",
+          "id": "28",
+          "x": 63,
+          "y": 63,
+          "fields": {
+            "TEXT": "Good"
+          }
+        },
+        {
+          "type": "text",
+          "id": "29",
+          "x": 63,
+          "y": 113,
+          "fields": {
+            "TEXT": "Morning!"
+          }
+        },
+        {
+          "type": "text_join",
+          "id": "30",
+          "x": 63,
+          "y": 163,
+          "inputs": {
+            "ADD0": {
+              "value": {
+                "type": "text",
+                "id": "28"
+              }
+            },
+            "ADD1": {
+              "value": {
+                "type": "text",
+                "id": "29"
+              }
+            }
+          }
+        },
+        {
+          "type": "text_print",
+          "id": "31",
+          "x": 63,
+          "y": 213,
+          "inputs": {
+            "TEXT": {
+              "value": {
+                "type": "text_join",
+                "id": "30"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "description": "Subtract two numbers",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "math_number",
+          "id": "32",
+          "x": 63,
+          "y": 63,
+          "fields": {
+            "NUM": 12
+          }
+        },
+        {
+          "type": "math_number",
+          "id": "33",
+          "x": 63,
+          "y": 113,
+          "fields": {
+            "NUM": 4
+          }
+        },
+        {
+          "type": "math_arithmetic",
+          "id": "34",
+          "x": 63,
+          "y": 163,
+          "inputs": {
+            "A": {
+              "shadow": {
+                "type": "math_number",
+                "id": "35",
+                "fields": {
+                  "NUM": 12
+                }
+              }
+            },
+            "B": {
+              "shadow": {
+                "type": "math_number",
+                "id": "36",
+                "fields": {
+                  "NUM": 4
+                }
+              }
+            }
+          },
+          "fields": {
+            "OP": "SUBTRACT"
+          }
+        },
+        {
+          "type": "text_print",
+          "id": "37",
+          "x": 63,
+          "y": 213,
+          "inputs": {
+            "TEXT": {
+              "value": {
+                "type": "math_arithmetic",
+                "id": "34"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "description": "Divide two numbers",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "math_number",
+          "id": "38",
+          "x": 63,
+          "y": 63,
+          "fields": {
+            "NUM": 20
+          }
+        },
+        {
+          "type": "math_number",
+          "id": "39",
+          "x": 63,
+          "y": 113,
+          "fields": {
+            "NUM": 4
+          }
+        },
+        {
+          "type": "math_arithmetic",
+          "id": "40",
+          "x": 63,
+          "y": 163,
+          "inputs": {
+            "A": {
+              "shadow": {
+                "type": "math_number",
+                "id": "41",
+                "fields": {
+                  "NUM": 20
+                }
+              }
+            },
+            "B": {
+              "shadow": {
+                "type": "math_number",
+                "id": "42",
+                "fields": {
+                  "NUM": 4
+                }
+              }
+            }
+          },
+          "fields": {
+            "OP": "DIVIDE"
+          }
+        },
+        {
+          "type": "text_print",
+          "id": "43",
+          "x": 63,
+          "y": 213,
+          "inputs": {
+            "TEXT": {
+              "value": {
+                "type": "math_arithmetic",
+                "id": "40"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "description": "Calculate the square of a number",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "math_number",
+          "id": "44",
+          "x": 63,
+          "y": 63,
+          "fields": {
+            "NUM": 3
+          }
+        },
+        {
+          "type": "math_arithmetic",
+          "id": "45",
+          "x": 63,
+          "y": 113,
+          "inputs": {
+            "A": {
+              "shadow": {
+                "type": "math_number",
+                "id": "46",
+                "fields": {
+                  "NUM": 3
+                }
+              }
+            },
+            "B": {
+              "shadow": {
+                "type": "math_number",
+                "id": "47",
+                "fields": {
+                  "NUM": 3
+                }
+              }
+            }
+          },
+          "fields": {
+            "OP": "MULTIPLY"
+          }
+        },
+        {
+          "type": "text_print",
+          "id": "48",
+          "x": 63,
+          "y": 163,
+          "inputs": {
+            "TEXT": {
+              "value": {
+                "type": "math_arithmetic",
+                "id": "45"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+]
