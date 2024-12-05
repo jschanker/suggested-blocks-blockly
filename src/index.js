@@ -24,8 +24,8 @@ export class BlockSuggestor {
    * @param {number} numBlocksPerCategory the size of each toolbox category
    */
   constructor(numBlocksPerCategory) {
-    /**
-    * Sets the model to null
+   /**
+    * Machine learning model used to get the suggested blocks initialized to null 
     */
     this.model = null;
     /**
