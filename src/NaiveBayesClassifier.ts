@@ -52,41 +52,38 @@ class NaiveBayesClassifier implements MachineLearningModel {
 
     getSuggestedBlocks(description: string): Blockly.Block[] {
         const uniqueTokens = new Set(this.tokenizer.tokenize(description));
-        console.log("Tokens:", Array.from(uniqueTokens));
     
         const filteredEntries = Array.from(this.tokenBlockFrequencyMap.entries()).filter(([key]) => {
             const [token] = this.decodeKey(key);
             return uniqueTokens.has(token);
         });
-        console.log("Filtered Entries:", filteredEntries);
     
-        const blockTypeCounts: Map<string, number> = new Map();
+        const blockScores: Map<string, number> = new Map();
     
         for (const [key, frequency] of filteredEntries) {
-            const [, blockType] = this.decodeKey(key);
-            blockTypeCounts.set(blockType, (blockTypeCounts.get(blockType) || 0) + frequency);
+            const [token, blockType] = this.decodeKey(key);
+            const nBlock = this.blockFrequencyMap.get(blockType) || 0;
+            const nTokenAndBlock = frequency;
+    
+            if (nBlock > 0) {
+                const tokenBlockProbability = nTokenAndBlock / nBlock;
+                const blockProbability = nBlock / this.totalDescriptions;
+    
+                const score = tokenBlockProbability * blockProbability;
+                blockScores.set(blockType, (blockScores.get(blockType) || 0) + score);
+            }
         }
-        console.log("Block Type Counts:", Array.from(blockTypeCounts.entries()));
     
-        const totalTokenOccurrences = Array.from(uniqueTokens)
-            .map((token) => this.tokenFrequencyMap.get(token) || 0)
-            .reduce((sum, count) => sum + count, 0);
-        console.log("Total Token Occurrences:", totalTokenOccurrences);
+        const result = Array.from(blockScores.entries())
+            .sort((a, b) => b[1] - a[1])
+            .map(([blockType]) => {
+                const workspace = new Blockly.Workspace();
+                return workspace.newBlock(blockType);
+            });
     
-        const result = Array.from(blockTypeCounts.entries())
-            .map(([blockType, count]) => {
-                const blockFrequency = this.blockFrequencyMap.get(blockType) || 0;
-                const probability = (count / totalTokenOccurrences) * (blockFrequency / this.totalDescriptions);
-                return { blockType, probability };
-            })
-            .sort((a, b) => b.probability - a.probability);
-        console.log("Result Before Mapping:", result);
-    
-        return result.map(({ blockType }) => {
-            const workspace = new Blockly.Workspace();
-            return workspace.newBlock(blockType);
-        });
+        return result;
     }
+    
     
     
     
