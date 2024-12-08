@@ -1,4 +1,6 @@
 import MachineLearningModel from "./IMachineLearningModel";
+import Tokenizer from "./ITokenizer";
+import SingleWordTokenizer from "./SingleWordTokenizer";
 import * as Blockly from 'blockly/core';
 
 class NaiveBayesClassifier implements MachineLearningModel {
@@ -50,10 +52,13 @@ class NaiveBayesClassifier implements MachineLearningModel {
 
     getSuggestedBlocks(description: string): Blockly.Block[] {
         const uniqueTokens = new Set(this.tokenizer.tokenize(description));
+        console.log("Tokens:", Array.from(uniqueTokens));
+    
         const filteredEntries = Array.from(this.tokenBlockFrequencyMap.entries()).filter(([key]) => {
             const [token] = this.decodeKey(key);
             return uniqueTokens.has(token);
         });
+        console.log("Filtered Entries:", filteredEntries);
     
         const blockTypeCounts: Map<string, number> = new Map();
     
@@ -61,10 +66,12 @@ class NaiveBayesClassifier implements MachineLearningModel {
             const [, blockType] = this.decodeKey(key);
             blockTypeCounts.set(blockType, (blockTypeCounts.get(blockType) || 0) + frequency);
         }
+        console.log("Block Type Counts:", Array.from(blockTypeCounts.entries()));
     
         const totalTokenOccurrences = Array.from(uniqueTokens)
             .map((token) => this.tokenFrequencyMap.get(token) || 0)
             .reduce((sum, count) => sum + count, 0);
+        console.log("Total Token Occurrences:", totalTokenOccurrences);
     
         const result = Array.from(blockTypeCounts.entries())
             .map(([blockType, count]) => {
@@ -73,6 +80,7 @@ class NaiveBayesClassifier implements MachineLearningModel {
                 return { blockType, probability };
             })
             .sort((a, b) => b.probability - a.probability);
+        console.log("Result Before Mapping:", result);
     
         return result.map(({ blockType }) => {
             const workspace = new Blockly.Workspace();
@@ -81,20 +89,7 @@ class NaiveBayesClassifier implements MachineLearningModel {
     }
     
     
-    }
-
-
     
-
-interface Tokenizer {
-    tokenize(a:string): string[];
-
-}
-class SingleWordTokenizer implements Tokenizer {
-    tokenize(a:string): string[] {
-        return a.toLocaleLowerCase().replace(/[.,\/#!$%\^&\*;:{}=\-_`~()]/g,"").split("");
-        
     }
-}
 
 export default NaiveBayesClassifier;

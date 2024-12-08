@@ -5,29 +5,30 @@ describe("NaiveBayesClassifier", () => {
     it("should return suggested blocks", () => {
         const classifier = new NaiveBayesClassifier({});
         const description = "create variable";
-
+    
         classifier["tokenBlockFrequencyMap"] = new Map([
             ['["create", "variable_block"]', 3],
             ['["variable", "variable_block"]', 5],
         ]);
-
+    
         classifier["blockFrequencyMap"] = new Map([
             ["variable_block", 8],
         ]);
-
+    
         classifier["tokenFrequencyMap"] = new Map([
             ["create", 6],
             ["variable", 7],
         ]);
-
+    
         classifier["totalDescriptions"] = 10;
-
+    
         const suggestedBlocks = classifier.getSuggestedBlocks(description);
-
+    
         expect(suggestedBlocks).toBeDefined();
         expect(suggestedBlocks.length).toBeGreaterThan(0);
         expect(suggestedBlocks[0].type).toBe("variable_block");
     });
+    
 
     it("should rank blocks by probability (mocked)", () => {
         const classifier = new NaiveBayesClassifier({});
