@@ -1,4 +1,4 @@
-import MachineLearningModel from 'MachineLearningModel';
+import MachineLearningModel from "./IMachineLearningModel";
 import * as Blockly from 'blockly/core';
 
 class NaiveBayesClassifier implements MachineLearningModel {
@@ -48,30 +48,41 @@ class NaiveBayesClassifier implements MachineLearningModel {
 
     }
 
-    getSuggestedBlocks(description: string): { block: string; probability: number }[] {
+    getSuggestedBlocks(description: string): Blockly.Block[] {
         const uniqueTokens = new Set(this.tokenizer.tokenize(description));
-        const filteredEntries = Array.from(this.tokenBlockFrequencyMap.entries()).filter(([key, frequency]) => {
-            const [token, block] = this.decodeKey(key);
+        const filteredEntries = Array.from(this.tokenBlockFrequencyMap.entries()).filter(([key]) => {
+            const [token] = this.decodeKey(key);
             return uniqueTokens.has(token);
         });
+    
         const blockTypeCounts: Map<string, number> = new Map();
+    
         for (const [key, frequency] of filteredEntries) {
-            const [, block] = this.decodeKey(key);
-            blockTypeCounts.set(block, (blockTypeCounts.get(block) || 0) + frequency);
+            const [, blockType] = this.decodeKey(key);
+            blockTypeCounts.set(blockType, (blockTypeCounts.get(blockType) || 0) + frequency);
         }
+    
         const totalTokenOccurrences = Array.from(uniqueTokens)
             .map((token) => this.tokenFrequencyMap.get(token) || 0)
             .reduce((sum, count) => sum + count, 0);
-        const result = Array.from(blockTypeCounts.entries()).map(([block, count]) => {
-            const blockFrequency = this.blockFrequencyMap.get(block) || 0;
-            const probability = (count / totalTokenOccurrences) * (blockFrequency / this.totalDescriptions);
-            return { block, probability };
+    
+        const result = Array.from(blockTypeCounts.entries())
+            .map(([blockType, count]) => {
+                const blockFrequency = this.blockFrequencyMap.get(blockType) || 0;
+                const probability = (count / totalTokenOccurrences) * (blockFrequency / this.totalDescriptions);
+                return { blockType, probability };
+            })
+            .sort((a, b) => b.probability - a.probability);
+    
+        return result.map(({ blockType }) => {
+            const workspace = new Blockly.Workspace();
+            return workspace.newBlock(blockType);
         });
-        return result.sort((a, b) => b.probability - a.probability);
+    }
+    
+    
     }
 
-
-}
 
     
 
