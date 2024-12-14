@@ -51,42 +51,31 @@ class NaiveBayesClassifier implements MachineLearningModel {
     }
 
     getSuggestedBlocks(description: string): Blockly.Block[] {
-        const uniqueTokens = new Set(this.tokenizer.tokenize(description));
-    
-        const filteredEntries = Array.from(this.tokenBlockFrequencyMap.entries()).filter(([key]) => {
+        // Tokenize the given inputted description
+        const arrayTokens = this.tokenizer.tokenize(description)
+        // Convert to a set
+        const tokenSet = new Set(arrayTokens)
+        /*  Filter the Array of key-value pairs from tokenBlockFrequencyMap 
+         to only include pairs where the key is one of the tokens in the set. */
+         const filteredArray = Array.from(this.tokenBlockFrequencyMap.entries()).filter(([key, value]) => {
             const [token] = this.decodeKey(key);
-            return uniqueTokens.has(token);
+            return tokenSet.has(token);
         });
+
+        // Then initialize a variable possibleBlockTypes which should be initialized to a set of the items at index 1 from this filtered Array.
+        const possibleBlockTypes = new Set(
+            filteredArray.map(([key]) => {
+                const [, blockType] = this.decodeKey(key); 
+                return blockType; 
+            }))
     
-        const blockScores: Map<string, number> = new Map();
-    
-        for (const [key, frequency] of filteredEntries) {
-            const [token, blockType] = this.decodeKey(key);
-            const nBlock = this.blockFrequencyMap.get(blockType) || 0;
-            const nTokenAndBlock = frequency;
-    
-            if (nBlock > 0) {
-                const tokenBlockProbability = nTokenAndBlock / nBlock;
-                const blockProbability = nBlock / this.totalDescriptions;
-    
-                const score = tokenBlockProbability * blockProbability;
-                blockScores.set(blockType, (blockScores.get(blockType) || 0) + score);
-            }
-        }
-    
-        const result = Array.from(blockScores.entries())
-            .sort((a, b) => b[1] - a[1])
-            .map(([blockType]) => {
-                const workspace = new Blockly.Workspace();
-                return workspace.newBlock(blockType);
-            });
-    
-        return result;
-    }
+        throw new Error("placeholder return for tests");
     
     
     
     
     }
+
+}
 
 export default NaiveBayesClassifier;
