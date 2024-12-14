@@ -124,4 +124,91 @@ describe("NaiveBayesClassifier", () => {
 
         expect(possibleBlockTypes).toEqual(expectedPossibleBlockTypes);
     });
+
+    // Step 12
+    it("should calculate pTokenGivenBlock correctly for a single token and block", () => {
+        const classifier = new NaiveBayesClassifier({});
+        classifier["toKey"] = jest.fn(([token, blockType]) => JSON.stringify([token, blockType]));
+
+        classifier["tokenBlockFrequencyMap"] = new Map([
+            ['["hello", "blockA"]', 3]
+        ]);
+        classifier["blockFrequencyMap"] = new Map([
+            ["blockA", 10]
+        ]);
+
+        const tokenSet = new Set(["hello"]);
+        const possibleBlockTypes = new Set(["blockA"]);
+        let pTokenGivenBlock = 0;
+
+        for (const blockType of possibleBlockTypes) {
+            for (const token of tokenSet) {
+                const tokenBlockKey = classifier.toKey([token, blockType]);
+                const tokenBlockFrequency = classifier["tokenBlockFrequencyMap"].get(tokenBlockKey) || 0;
+                const blockFrequency = classifier["blockFrequencyMap"].get(blockType) || 0;
+
+                pTokenGivenBlock = blockFrequency > 0 ? tokenBlockFrequency / blockFrequency : 0;
+            }
+        }
+
+        expect(pTokenGivenBlock).toBe(3 / 10);
+    });
+
+    it("should set pTokenGivenBlock to 0 when block frequency is 0", () => {
+        const classifier = new NaiveBayesClassifier({});
+        classifier["toKey"] = jest.fn(([token, blockType]) => JSON.stringify([token, blockType]));
+
+        classifier["tokenBlockFrequencyMap"] = new Map([
+            ['["hello", "blockB"]', 5]
+        ]);
+        classifier["blockFrequencyMap"] = new Map([
+            ["blockB", 0]
+        ]);
+
+        const tokenSet = new Set(["hello"]);
+        const possibleBlockTypes = new Set(["blockB"]);
+        let pTokenGivenBlock = 0;
+
+        for (const blockType of possibleBlockTypes) {
+            for (const token of tokenSet) {
+                const tokenBlockKey = classifier.toKey([token, blockType]);
+                const tokenBlockFrequency = classifier["tokenBlockFrequencyMap"].get(tokenBlockKey) || 0;
+                const blockFrequency = classifier["blockFrequencyMap"].get(blockType) || 0;
+
+                pTokenGivenBlock = blockFrequency > 0 ? tokenBlockFrequency / blockFrequency : 0;
+            }
+        }
+
+        expect(pTokenGivenBlock).toBe(0);
+    });
+
+    it("should calculate pTokenGivenBlock correctly for multiple tokens", () => {
+        const classifier = new NaiveBayesClassifier({});
+        classifier["toKey"] = jest.fn(([token, blockType]) => JSON.stringify([token, blockType]));
+
+        classifier["tokenBlockFrequencyMap"] = new Map([
+            ['["hello", "blockA"]', 3],
+            ['["world", "blockA"]', 2]
+        ]);
+        classifier["blockFrequencyMap"] = new Map([
+            ["blockA", 10]
+        ]);
+
+        const tokenSet = new Set(["hello", "world"]);
+        const possibleBlockTypes = new Set(["blockA"]);
+        const pTokenGivenBlockResults: number[] = [];
+
+        for (const blockType of possibleBlockTypes) {
+            for (const token of tokenSet) {
+                const tokenBlockKey = classifier.toKey([token, blockType]);
+                const tokenBlockFrequency = classifier["tokenBlockFrequencyMap"].get(tokenBlockKey) || 0;
+                const blockFrequency = classifier["blockFrequencyMap"].get(blockType) || 0;
+
+                const pTokenGivenBlock = blockFrequency > 0 ? tokenBlockFrequency / blockFrequency : 0;
+                pTokenGivenBlockResults.push(pTokenGivenBlock);
+            }
+        }
+
+        expect(pTokenGivenBlockResults).toEqual([3 / 10, 2 / 10]);
+    });
 });
