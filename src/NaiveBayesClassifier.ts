@@ -73,28 +73,41 @@ class NaiveBayesClassifier implements MachineLearningModel {
         const blockTypeProbabilities = new Array(); // Add to array later
         const pBlock = 0.5
         const pNotBlock = 0.5
-        let numerator = pBlock
+
         let denominator = 0
         // Calculating probabilities
         for (const blockType of possibleBlockTypes) {
+            let numerator = pBlock
+            let pTokensGivenNotBlock = 1;
             
             for (const token of tokenSet) {
                 // Calculating probabilities
                 const tokenBlockKey = this.toKey([token, blockType]);
                 const tokenBlockFrequency = this.tokenBlockFrequencyMap.get(tokenBlockKey) || 0;
+                const tokenFrequency = this.tokenFrequencyMap.get(token) || 0;
+
                 const blockFrequency = this.blockFrequencyMap.get(blockType) || 0;
+                const notBlockFrequency = this.totalDescriptions - blockFrequency;
 
                 const pTokenGivenBlock = blockFrequency > 0 ? tokenBlockFrequency / blockFrequency : 0;
+
+                numerator *= pTokenGivenBlock
+
+                const pTokenGivenNotBlock = notBlockFrequency > 0
+                ? (tokenFrequency - tokenBlockFrequency) / notBlockFrequency
+                : 0;
+                pTokensGivenNotBlock *= pTokenGivenNotBlock;
+
             }
 
-        }
+            const denominator = numerator + pNotBlock * pTokensGivenNotBlock;
+            const probability = numerator / denominator;
         
-    
-        throw new Error("placeholder return for tests");
-    
-    
-    
-    
+            blockTypeProbabilities.push({ block: blockType, probability });
+
+        }
+        // Step 13
+        return(blockTypeProbabilities.sort((prob1, prob2) => prob2.probability - prob1.probability))
     }
 
 }

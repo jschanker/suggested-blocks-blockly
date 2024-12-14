@@ -216,4 +216,186 @@ describe("NaiveBayesClassifier", () => {
     
         expect(pTokenGivenBlockResults).toEqual([3 / 10, 2 / 10]);
     });
+
+    it("should calculate the numerator correctly for a single token and block", () => {
+        const classifier = new NaiveBayesClassifier({});
+        classifier["toKey"] = ([token, blockType]) => JSON.stringify([token, blockType]);
+
+        classifier["tokenBlockFrequencyMap"] = new Map([
+            [classifier.toKey(["hello", "blockA"]), 3]
+        ]);
+        classifier["blockFrequencyMap"] = new Map([
+            ["blockA", 10]
+        ]);
+
+        const tokenSet = new Set(["hello"]);
+        const possibleBlockTypes = new Set(["blockA"]);
+        const pBlock = 0.5;
+
+        let numerator = pBlock;
+
+        for (const blockType of possibleBlockTypes) {
+            for (const token of tokenSet) {
+                const tokenBlockKey = classifier.toKey([token, blockType]);
+                const tokenBlockFrequency = classifier["tokenBlockFrequencyMap"].get(tokenBlockKey) || 0;
+                const blockFrequency = classifier["blockFrequencyMap"].get(blockType) || 0;
+
+                const pTokenGivenBlock = blockFrequency > 0 ? tokenBlockFrequency / blockFrequency : 0;
+
+                numerator *= pTokenGivenBlock;
+            }
+        }
+
+        expect(numerator).toBe(0.5 * (3 / 10));
+    });
+
+    it("should calculate the numerator correctly for multiple tokens", () => {
+        const classifier = new NaiveBayesClassifier({});
+        classifier["toKey"] = ([token, blockType]) => JSON.stringify([token, blockType]);
+
+        classifier["tokenBlockFrequencyMap"] = new Map([
+            [classifier.toKey(["hello", "blockA"]), 3],
+            [classifier.toKey(["world", "blockA"]), 2]
+        ]);
+        classifier["blockFrequencyMap"] = new Map([
+            ["blockA", 10]
+        ]);
+
+        const tokenSet = new Set(["hello", "world"]);
+        const possibleBlockTypes = new Set(["blockA"]);
+        const pBlock = 0.5;
+
+        let numerator = pBlock;
+
+        for (const blockType of possibleBlockTypes) {
+            for (const token of tokenSet) {
+                const tokenBlockKey = classifier.toKey([token, blockType]);
+                const tokenBlockFrequency = classifier["tokenBlockFrequencyMap"].get(tokenBlockKey) || 0;
+                const blockFrequency = classifier["blockFrequencyMap"].get(blockType) || 0;
+
+                const pTokenGivenBlock = blockFrequency > 0 ? tokenBlockFrequency / blockFrequency : 0;
+
+                numerator *= pTokenGivenBlock;
+            }
+        }
+
+        expect(numerator).toBe(0.5 * (3 / 10) * (2 / 10));
+    });
+
+    it("should calculate numerator and pTokensGivenNotBlock correctly", () => {
+        const classifier = new NaiveBayesClassifier({});
+        classifier["toKey"] = ([token, blockType]) => JSON.stringify([token, blockType]);
+
+        classifier["tokenBlockFrequencyMap"] = new Map([
+            [classifier.toKey(["hello", "blockA"]), 3],
+            [classifier.toKey(["world", "blockA"]), 2],
+        ]);
+        classifier["tokenFrequencyMap"] = new Map([
+            ["hello", 5],
+            ["world", 4],
+        ]);
+        classifier["blockFrequencyMap"] = new Map([
+            ["blockA", 10],
+        ]);
+        classifier["totalDescriptions"] = 20;
+
+        const tokenSet = new Set(["hello", "world"]);
+        const possibleBlockTypes = new Set(["blockA"]);
+        const pBlock = 0.5;
+        const pNotBlock = 0.5;
+
+        let numerator = pBlock;
+        let pTokensGivenNotBlock = 1;
+
+        for (const blockType of possibleBlockTypes) {
+            for (const token of tokenSet) {
+                const tokenBlockKey = classifier.toKey([token, blockType]);
+                const tokenBlockFrequency = classifier["tokenBlockFrequencyMap"].get(tokenBlockKey) || 0;
+                const tokenFrequency = classifier["tokenFrequencyMap"].get(token) || 0;
+                const blockFrequency = classifier["blockFrequencyMap"].get(blockType) || 0;
+                const notBlockFrequency = classifier["totalDescriptions"] - blockFrequency;
+
+                const pTokenGivenBlock = blockFrequency > 0 ? tokenBlockFrequency / blockFrequency : 0;
+                numerator *= pTokenGivenBlock;
+
+                const pTokenGivenNotBlock = notBlockFrequency > 0
+                    ? (tokenFrequency - tokenBlockFrequency) / notBlockFrequency
+                    : 0;
+                pTokensGivenNotBlock *= pTokenGivenNotBlock;
+            }
+        }
+
+        expect(numerator).toBe(0.5 * (3 / 10) * (2 / 10));
+        expect(pTokensGivenNotBlock).toBe((2 / 10) * (2 / 10));
+    });
+
+    it("should calculate the denominator and probability correctly for a single block", () => {
+        const classifier = new NaiveBayesClassifier({});
+        const possibleBlockTypes = new Set(["blockA"]);
+        const tokenSet = new Set(["hello"]);
+
+        classifier["toKey"] = ([token, blockType]) => JSON.stringify([token, blockType]);
+        classifier["tokenBlockFrequencyMap"] = new Map([
+            [classifier.toKey(["hello", "blockA"]), 3]
+        ]);
+        classifier["tokenFrequencyMap"] = new Map([
+            ["hello", 5]
+        ]);
+        classifier["blockFrequencyMap"] = new Map([
+            ["blockA", 10]
+        ]);
+        classifier["totalDescriptions"] = 20;
+
+        const blockTypeProbabilities: { block: string; probability: number }[] = [];
+        const pBlock = 0.5;
+        const pNotBlock = 0.5;
+
+        for (const blockType of possibleBlockTypes) {
+            let numerator = pBlock;
+            let pTokensGivenNotBlock = 1;
+
+            for (const token of tokenSet) {
+                const tokenBlockKey = classifier.toKey([token, blockType]);
+                const tokenBlockFrequency = classifier["tokenBlockFrequencyMap"].get(tokenBlockKey) || 0;
+                const tokenFrequency = classifier["tokenFrequencyMap"].get(token) || 0;
+
+                const blockFrequency = classifier["blockFrequencyMap"].get(blockType) || 0;
+                const notBlockFrequency = classifier["totalDescriptions"] - blockFrequency;
+
+                const pTokenGivenBlock = blockFrequency > 0 ? tokenBlockFrequency / blockFrequency : 0;
+                numerator *= pTokenGivenBlock;
+
+                const pTokenGivenNotBlock = notBlockFrequency > 0
+                    ? (tokenFrequency - tokenBlockFrequency) / notBlockFrequency
+                    : 0;
+                pTokensGivenNotBlock *= pTokenGivenNotBlock;
+            }
+
+            const denominator = numerator + pNotBlock * pTokensGivenNotBlock;
+            const probability = numerator / denominator;
+
+            blockTypeProbabilities.push({ block: blockType, probability });
+        }
+
+        expect(blockTypeProbabilities).toEqual([
+            { block: "blockA", probability: (0.5 * (3 / 10)) / ((0.5 * (3 / 10)) + (0.5 * (2 / 10))) }
+        ]);
+    });
+
+    // Step 13
+    it("should sort blocks by probability in descending order", () => {
+        const blockTypeProbabilities = [
+            { block: "blockB", probability: 0.3 },
+            { block: "blockA", probability: 0.7 },
+            { block: "blockC", probability: 0.5 }
+        ];
+
+        const sortedProbabilities = blockTypeProbabilities.sort((prob1, prob2) => prob2.probability - prob1.probability);
+
+        expect(sortedProbabilities).toEqual([
+            { block: "blockA", probability: 0.7 },
+            { block: "blockC", probability: 0.5 },
+            { block: "blockB", probability: 0.3 }
+        ]);
+    });
 });
