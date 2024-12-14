@@ -23,7 +23,18 @@ export class BlockSuggestor {
    * Constructs a BlockSuggestor object.
    * @param {number} numBlocksPerCategory the size of each toolbox category
    */
+  
   constructor(numBlocksPerCategory) {
+    /**
+     * WorkspaceSvg variable references the workspace to store information
+     */
+    this.workspaceSvg = null; 
+    /**
+     * inputSource can be Element, a string, or null
+     */
+
+    this.inputSource = null;
+
     /**
      * Saves the full JSON data for each block type the first time it's used.
      * This helps store what initial configuration / sub-blocks each block type
@@ -178,7 +189,7 @@ export class BlockSuggestor {
 
 /**
  * Main entry point to initialize the suggested blocks categories.
- * @param {Blockly.WorkspaceSvg} workspace the workspace to load into
+ * @param {Blockly.WorkspaceSvg} workspaceOrContainer the workspace to load into WorkspaceSvg, or an Element, or string
  * @param {number} numBlocksPerCategory how many blocks should be included per
  * category. Defaults to 10.
  * @param {boolean} waitForFinishedLoading whether to wait until we hear the
@@ -186,16 +197,27 @@ export class BlockSuggestor {
  * if you disable events during initial load. Defaults to true.
  */
 export const init = function (
-  workspace,
+  workspaceOrContainer,
   numBlocksPerCategory = 10,
   waitForFinishedLoading = true,
 ) {
+  let workspace;
   const suggestor = new BlockSuggestor(numBlocksPerCategory);
+  if (workspaceOrContainer instanceof Blockly.WorkspaceSvg) {
+    workspace = workspaceOrContainer;
+  }
+  else if (typeof workspaceOrContainer === 'string') {
+    workspace =
+      document.getElementById(workspaceOrContainer) || document.querySelector(workspaceOrContainer);
+  } else {
+    workspace = workspaceOrContainer;
+  }
   workspace.registerToolboxCategoryCallback('MOST_USED', suggestor.getMostUsed);
   workspace.registerToolboxCategoryCallback(
     'RECENTLY_USED',
     suggestor.getRecentlyUsed,
   );
+  
   // If user says not to wait to hear FINISHED_LOADING event,
   // then always respond to BLOCK_CREATE events.
   if (!waitForFinishedLoading) suggestor.workspaceHasFinishedLoading = true;
