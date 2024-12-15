@@ -80,7 +80,7 @@ class NaiveBayesClassifier implements MachineLearningModel {
 
         const blockTypeProbabilities = new Array(); 
         const pBlock = 0.5
-        const pNotBlock = 0.5
+        const pNotBlock = 1 - pBlock
 
         let pTokens = 0
         for (const blockType of possibleBlockTypes) {
