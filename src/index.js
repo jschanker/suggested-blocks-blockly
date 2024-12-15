@@ -65,11 +65,15 @@ export class BlockSuggestor {
   }
 
 
-
+  /**
+   * Setter for the problem description
+   */
   set description(newValue) {
     this.inputSource = newValue
   }
-
+  /**
+   * Getter for the problem description
+   */
   get description(){
     return this.inputSource
   }
@@ -217,9 +221,14 @@ export const init = function (
   numBlocksPerCategory = 10,
   waitForFinishedLoading = true,
 ) {
+  // Variable to store the Blockly workspace instance
+  // Variable to store the container element
   let workspace
   let container;
   const suggestor = new BlockSuggestor(numBlocksPerCategory);
+  // Check if 'workspaceOrContainer' is already a Blockly workspace
+  // If 'workspaceOrContainer' is a string, attempt to find the container element
+  // If 'workspaceOrContainer' is not a string, treat it as a container element
   if (workspaceOrContainer instanceof Blockly.WorkspaceSvg) {
     workspace = workspaceOrContainer;
   }
@@ -234,19 +243,21 @@ export const init = function (
     
     let textInputAndButtonContainer = document.createElement('div');
     let blocklyContainer = document.createElement('div');
- 
+    
+    // Create a button element
+    // Create an input element for problem input
     const button = document.createElement("button");
     button.innerText = "Input"
     const problemInput = document.createElement("input");
         problemInput.type = "text";
         problemInput.placeholder = "Enter problem here";
-
+    // Inject Blockly workspace into the 'blocklyContainer' div
     workspace = Blockly.inject(blocklyContainer);   
     this.inputSource = problemInput;
     textInputAndButtonContainer.appendChild(problemInput);
     textInputAndButtonContainer.appendChild(button)
 
-
+    // Append the text input container and Blockly container to the main container
     container.appendChild(textInputAndButtonContainer)
     container.appendChild(blocklyContainer)
   }
