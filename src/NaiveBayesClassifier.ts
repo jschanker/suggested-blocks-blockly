@@ -48,12 +48,8 @@ class NaiveBayesClassifier implements MachineLearningModel {
                 this.blockFrequencyMap.set(bt,(this.blockFrequencyMap.get(bt)||0) +1) 
             }
             for(let ut of uniqueTokens) {
-                if (this.tokenFrequencyMap.has(ut)) {
-                    this.tokenFrequencyMap.set(ut,this.tokenFrequencyMap.get(ut)!+1)
-                } else {
-                    this.tokenFrequencyMap.set(ut,1)
-    
-                }
+                this.tokenFrequencyMap.set(ut, (this.tokenFrequencyMap.get(ut) || 0) + 1);
+
                 for (let b of blockTypes) {
                     const key = this.toKey([ut,b]);
                     this.tokenBlockFrequencyMap.set(key,(this.tokenBlockFrequencyMap.get(key)||0)+1)
