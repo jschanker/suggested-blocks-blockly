@@ -3,7 +3,6 @@ import SingleWordTokenizer from "../src/SingleWordTokenizer";
 import * as Blockly from "blockly/core";
 
 describe("NaiveBayesClassifier", () => {
-    // Step 10
     it("should tokenize the description using the provided tokenizer", () => {
         const mockTokenizer = new SingleWordTokenizer();
         const classifier = new NaiveBayesClassifier({ tokenizer: mockTokenizer });
@@ -84,7 +83,6 @@ describe("NaiveBayesClassifier", () => {
         expect(usedTokenBlockPairs).toEqual([]);
     });
 
-    // Step 11
     it("should create a set of unique block types from the filtered array", () => {
         const classifier = new NaiveBayesClassifier({});
         classifier["decodeKey"] = jest.fn((key) => JSON.parse(key));
@@ -125,7 +123,6 @@ describe("NaiveBayesClassifier", () => {
         expect(possibleBlockTypes).toEqual(expectedPossibleBlockTypes);
     });
 
-    // Step 12
     it("should calculate pTokenGivenBlock correctly for a single token and block", () => {
         const classifier = new NaiveBayesClassifier({});
         classifier["toKey"] = ([token, blockType]) => JSON.stringify([token, blockType]);
@@ -302,7 +299,6 @@ describe("NaiveBayesClassifier", () => {
         const tokenSet = new Set(["hello", "world"]);
         const possibleBlockTypes = new Set(["blockA"]);
         const pBlock = 0.5;
-        const pNotBlock = 0.5;
 
         let numerator = pBlock;
         let pTokensGivenNotBlock = 1;
@@ -382,7 +378,6 @@ describe("NaiveBayesClassifier", () => {
         ]);
     });
 
-    // Step 13
     it("should sort blocks by probability in descending order", () => {
         const blockTypeProbabilities = [
             { block: "blockB", probability: 0.3 },

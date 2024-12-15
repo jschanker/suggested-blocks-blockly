@@ -6,21 +6,22 @@ import * as Blockly from 'blockly/core';
 class NaiveBayesClassifier implements MachineLearningModel {
     private tokenizer: Tokenizer
     private totalDescriptions: number
-    /** Maps a token (word) to the number of training descriptions it appears in.
+    /** 
+     * Maps a token to the number of training descriptions it appears in.
         Key: Token (string)
-        Value: Frequency of the token in descriptions (number) */
+        Value: Frequency of the token in descriptions (number) // change this*/
     private tokenFrequencyMap: Map<string,number>
     /**
      * Maps a block type to the number of training descriptions in which it is used.
      * Key: Block type (string)
-     * Value: Frequency of the block type in descriptions (number)
+     * Value: Frequency of the block type in descriptions (number) // change this
      */
     private blockFrequencyMap:Map<string,number>
     /**
-    * Maps a combination of a token (word) and a block type to the number of training descriptions 
+    * Maps a combination of a token and a block type to the number of training descriptions 
     * where the token appears in conjunction with that block type.
     * Key: Encoded string combining token and block type (string)
-    * Value: Frequency of the token-block pair in descriptions (number)
+    * Value: Number of tokens for which that particular block type is used
     */
     private tokenBlockFrequencyMap: Map<string,number>
 
@@ -39,25 +40,24 @@ class NaiveBayesClassifier implements MachineLearningModel {
     decodeKey(a:string): string[] {
         return JSON.parse(a)
     }
-    train(data: { description:string; blocks:Blockly.Block[] }[]): any {
-        this.totalDescriptions += data.length;
-        for(let dataPoint of data) {
-            const uniqueTokens = new Set(this.tokenizer.tokenize(dataPoint.description));
-            const blockTypes = new Set(dataPoint.blocks.map(block => block.type))
-            for(let bt of blockTypes) {
-                this.blockFrequencyMap.set(bt,(this.blockFrequencyMap.get(bt)||0) +1) 
-            }
-            for(let ut of uniqueTokens) {
-                this.tokenFrequencyMap.set(ut, (this.tokenFrequencyMap.get(ut) || 0) + 1);
 
-                for (let b of blockTypes) {
-                    const key = this.toKey([ut,b]);
-                    this.tokenBlockFrequencyMap.set(key,(this.tokenBlockFrequencyMap.get(key)||0)+1)
+    train(data: { description: string; blocks: Blockly.Block[] }[]): void {
+        this.totalDescriptions += data.length;
+        for (const dataPoint of data) {
+            const uniqueTokens = new Set(this.tokenizer.tokenize(dataPoint.description));
+            const blockTypes = new Set(dataPoint.blocks.map(block => block.type));
+            for (const bt of blockTypes) {
+                this.blockFrequencyMap.set(bt, (this.blockFrequencyMap.get(bt) || 0) + 1);
+            }
+            for (const ut of uniqueTokens) {
+                this.tokenFrequencyMap.set(ut, (this.tokenFrequencyMap.get(ut) || 0) + 1);
+    
+                for (const b of blockTypes) {
+                    const key = this.toKey([ut, b]);
+                    this.tokenBlockFrequencyMap.set(key, (this.tokenBlockFrequencyMap.get(key) || 0) + 1);
                 }
-                
             }
         }
-
     }
 
     getSuggestedBlocks(description: string): Blockly.Block[] {
@@ -78,7 +78,6 @@ class NaiveBayesClassifier implements MachineLearningModel {
         const pBlock = 0.5
         const pNotBlock = 1 - pBlock
 
-        let pTokens = 0
         for (const blockType of possibleBlockTypes) {
             let numerator = pBlock
             let pTokensGivenNotBlock = 1;
