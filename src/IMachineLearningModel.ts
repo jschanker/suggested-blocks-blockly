@@ -1,9 +1,9 @@
 import * as Blockly from 'blockly/core';
 
 interface MachineLearningModel {
-  getSuggestedBlocks(description: string): Array<Blockly.Block>;
+  getSuggestedBlocks(description: string): Blockly.Block[];
 
-  train(data: {description: string; blocks: Array<Blockly.Block>}[]): void;
+  train(data: {description: string; blocks: Blockly.Block[]}[]): void;
 }
 
 export default MachineLearningModel;
