@@ -30,7 +30,8 @@ export class BlockSuggestor {
      */
     this.workspaceSvg = null; 
     /**
-     * inputSource can be Element, a string, or null
+     * @param {element|string|null} inputSource store the problem description 
+     * that's used to make suggestions for the blocks
      * used to make suggestions for the blocks. 
      * When it's a @type {string}, it becomes the problem description that's used. 
      * When it's an @type {element}, we use an associated value of sorts.
