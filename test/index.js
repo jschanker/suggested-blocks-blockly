@@ -20,7 +20,7 @@ import * as SuggestedBlocks from '../src/index';
  */
 function createWorkspace(blocklyDiv, options) {
   const workspace = Blockly.inject(blocklyDiv, options);
-  SuggestedBlocks.init(workspace);
+  SuggestedBlocks.init(blocklyDiv);
   return workspace;
 }
 

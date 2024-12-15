@@ -217,10 +217,11 @@ export const init = function (
   numBlocksPerCategory = 10,
   waitForFinishedLoading = true,
 ) {
+  let workspace
   let container;
   const suggestor = new BlockSuggestor(numBlocksPerCategory);
   if (workspaceOrContainer instanceof Blockly.WorkspaceSvg) {
-    this.workspaceSvg = workspaceOrContainer;
+    workspace = workspaceOrContainer;
   }
   else {
       if (typeof workspaceOrContainer === 'string') {
@@ -237,10 +238,10 @@ export const init = function (
     const button = document.createElement("button");
     button.innerText = "Input"
     const problemInput = document.createElement("input");
-        input.type = "text";
-        input.placeholder = "Enter problem here";
+        problemInput.type = "text";
+        problemInput.placeholder = "Enter problem here";
 
-    this.workspaceSvg = Blockly.inject(blocklyContainer);   
+    workspace = Blockly.inject(blocklyContainer);   
     this.inputSource = problemInput;
     textInputAndButtonContainer.appendChild(problemInput);
     textInputAndButtonContainer.appendChild(button)
@@ -249,7 +250,7 @@ export const init = function (
     container.appendChild(textInputAndButtonContainer)
     container.appendChild(blocklyContainer)
   }
-  
+  this.workspaceSvg = workspace;
   workspace.registerToolboxCategoryCallback('MOST_USED', suggestor.getMostUsed);
   workspace.registerToolboxCategoryCallback(
     'RECENTLY_USED',
