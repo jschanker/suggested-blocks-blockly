@@ -11,9 +11,9 @@ describe("NaiveBayesClassifier", () => {
         const description = "Hello, world! Welcome to testing.";
         const expectedTokens = ["hello", "world", "welcome", "to", "testing"];
 
-        const arrayTokens = classifier["tokenizer"].tokenize(description);
+        const descriptionTokens = classifier["tokenizer"].tokenize(description);
 
-        expect(arrayTokens).toEqual(expectedTokens);
+        expect(descriptionTokens).toEqual(expectedTokens);
     });
 
     it("should use SingleWordTokenizer by default if no tokenizer is provided", () => {
@@ -22,9 +22,9 @@ describe("NaiveBayesClassifier", () => {
         const description = "Testing the default tokenizer.";
         const expectedTokens = ["testing", "the", "default", "tokenizer"];
 
-        const arrayTokens = classifier["tokenizer"].tokenize(description);
+        const descriptionTokens = classifier["tokenizer"].tokenize(description);
 
-        expect(arrayTokens).toEqual(expectedTokens);
+        expect(descriptionTokens).toEqual(expectedTokens);
     });
 
     it("should tokenize the description and convert it to a set of unique tokens", () => {
@@ -34,8 +34,8 @@ describe("NaiveBayesClassifier", () => {
         const description = "Hello, world! Hello testing.";
         const expectedTokens = new Set(["hello", "world", "testing"]);
 
-        const arrayTokens = classifier["tokenizer"].tokenize(description);
-        const tokenSet = new Set(arrayTokens);
+        const descriptionTokens = classifier["tokenizer"].tokenize(description);
+        const tokenSet = new Set(descriptionTokens);
 
         expect(tokenSet).toEqual(expectedTokens);
     });
@@ -51,19 +51,19 @@ describe("NaiveBayesClassifier", () => {
         classifier["decodeKey"] = jest.fn((key) => JSON.parse(key));
 
         const description = "hello world";
-        const expectedFilteredArray = [
+        const expectedusedTokenBlockPairs = [
             ['["hello", "text_block"]', 5],
             ['["world", "logic_block"]', 3],
         ];
 
-        const arrayTokens = classifier["tokenizer"].tokenize(description);
-        const tokenSet = new Set(arrayTokens);
-        const filteredArray = Array.from(classifier["tokenBlockFrequencyMap"].entries()).filter(([key, value]) => {
+        const descriptionTokens = classifier["tokenizer"].tokenize(description);
+        const tokenSet = new Set(descriptionTokens);
+        const usedTokenBlockPairs = Array.from(classifier["tokenBlockFrequencyMap"].entries()).filter(([key, value]) => {
             const [token] = classifier.decodeKey(key);
             return tokenSet.has(token);
         });
 
-        expect(filteredArray).toEqual(expectedFilteredArray);
+        expect(usedTokenBlockPairs).toEqual(expectedusedTokenBlockPairs);
     });
 
     it("should return an empty array if no tokens match", () => {
@@ -76,12 +76,12 @@ describe("NaiveBayesClassifier", () => {
         classifier["decodeKey"] = jest.fn((key) => JSON.parse(key));
 
         const description = "goodbye";
-        const filteredArray = Array.from(classifier["tokenBlockFrequencyMap"].entries()).filter(([key, value]) => {
+        const usedTokenBlockPairs = Array.from(classifier["tokenBlockFrequencyMap"].entries()).filter(([key, value]) => {
             const [token] = classifier.decodeKey(key);
             return new Set(classifier["tokenizer"].tokenize(description)).has(token);
         });
 
-        expect(filteredArray).toEqual([]);
+        expect(usedTokenBlockPairs).toEqual([]);
     });
 
     // Step 11
@@ -89,7 +89,7 @@ describe("NaiveBayesClassifier", () => {
         const classifier = new NaiveBayesClassifier({});
         classifier["decodeKey"] = jest.fn((key) => JSON.parse(key));
 
-        const filteredArray: [string, number][] = [
+        const usedTokenBlockPairs: [string, number][] = [
             ['["hello", "text_block"]', 5],
             ['["world", "logic_block"]', 3],
             ['["hello", "logic_block"]', 2],
@@ -98,7 +98,7 @@ describe("NaiveBayesClassifier", () => {
         const expectedPossibleBlockTypes = new Set(["text_block", "logic_block"]);
 
         const possibleBlockTypes = new Set(
-            filteredArray.map(([key]) => {
+            usedTokenBlockPairs.map(([key]) => {
                 const [, blockType] = classifier.decodeKey(key);
                 return blockType;
             })
@@ -111,12 +111,12 @@ describe("NaiveBayesClassifier", () => {
         const classifier = new NaiveBayesClassifier({});
         classifier["decodeKey"] = jest.fn((key) => JSON.parse(key));
 
-        const filteredArray: [string, number][] = [];
+        const usedTokenBlockPairs: [string, number][] = [];
 
         const expectedPossibleBlockTypes = new Set();
 
         const possibleBlockTypes = new Set(
-            filteredArray.map(([key]) => {
+            usedTokenBlockPairs.map(([key]) => {
                 const [, blockType] = classifier.decodeKey(key);
                 return blockType;
             })
@@ -329,7 +329,7 @@ describe("NaiveBayesClassifier", () => {
         expect(pTokensGivenNotBlock).toBe((2 / 10) * (2 / 10));
     });
 
-    it("should calculate the denominator and probability correctly for a single block", () => {
+    it("should calculate the pTokens and probability correctly for a single block", () => {
         const classifier = new NaiveBayesClassifier({});
         const possibleBlockTypes = new Set(["blockA"]);
         const tokenSet = new Set(["hello"]);
@@ -371,8 +371,8 @@ describe("NaiveBayesClassifier", () => {
                 pTokensGivenNotBlock *= pTokenGivenNotBlock;
             }
 
-            const denominator = numerator + pNotBlock * pTokensGivenNotBlock;
-            const probability = numerator / denominator;
+            const pTokens = numerator + pNotBlock * pTokensGivenNotBlock;
+            const probability = numerator / pTokens;
 
             blockTypeProbabilities.push({ block: blockType, probability });
         }

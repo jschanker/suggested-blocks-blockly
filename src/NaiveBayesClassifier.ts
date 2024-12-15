@@ -6,12 +6,26 @@ import * as Blockly from 'blockly/core';
 class NaiveBayesClassifier implements MachineLearningModel {
     private tokenizer: Tokenizer
     private totalDescriptions: number
+    /** Maps a token (word) to the number of training descriptions it appears in.
+        Key: Token (string)
+        Value: Frequency of the token in descriptions (number) */
     private tokenFrequencyMap: Map<string,number>
+    /**
+     * Maps a block type to the number of training descriptions in which it is used.
+     * Key: Block type (string)
+     * Value: Frequency of the block type in descriptions (number)
+     */
     private blockFrequencyMap:Map<string,number>
+    /**
+    * Maps a combination of a token (word) and a block type to the number of training descriptions 
+    * where the token appears in conjunction with that block type.
+    * Key: Encoded string combining token and block type (string)
+    * Value: Frequency of the token-block pair in descriptions (number)
+    */
     private tokenBlockFrequencyMap: Map<string,number>
 
     constructor(options:{tokenizer?:Tokenizer}) {
-        this.tokenizer = options.tokenizer || new SingleWordTokenizer() /* step 4 here || means or */
+        this.tokenizer = options.tokenizer || new SingleWordTokenizer() 
         this.totalDescriptions = 0
         this.tokenBlockFrequencyMap = new Map<string,number>()
         this.blockFrequencyMap = new Map<string,number>()
@@ -51,37 +65,29 @@ class NaiveBayesClassifier implements MachineLearningModel {
     }
 
     getSuggestedBlocks(description: string): Blockly.Block[] {
-        // Tokenize the given inputted description
-        const arrayTokens = this.tokenizer.tokenize(description)
-        // Convert to a set
-        const tokenSet = new Set(arrayTokens)
-        /*  Filter the Array of key-value pairs from tokenBlockFrequencyMap 
-         to only include pairs where the key is one of the tokens in the set. */
-         const filteredArray = Array.from(this.tokenBlockFrequencyMap.entries()).filter(([key, value]) => {
+        const descriptionTokens = this.tokenizer.tokenize(description)
+        const tokenSet = new Set(descriptionTokens)
+         const usedTokenBlockPairs = Array.from(this.tokenBlockFrequencyMap.entries()).filter(([key, value]) => {
             const [token] = this.decodeKey(key);
             return tokenSet.has(token);
         });
 
-        // Then initialize a variable possibleBlockTypes which should be initialized to a set of the items at index 1 from this filtered Array.
         const possibleBlockTypes = new Set(
-            filteredArray.map(([key]) => {
+            usedTokenBlockPairs.map(([key]) => {
                 const [, blockType] = this.decodeKey(key); 
                 return blockType; 
             }))
 
-        // Now define a variable blockTypeProbabilities
-        const blockTypeProbabilities = new Array(); // Add to array later
+        const blockTypeProbabilities = new Array(); 
         const pBlock = 0.5
         const pNotBlock = 0.5
 
-        let denominator = 0
-        // Calculating probabilities
+        let pTokens = 0
         for (const blockType of possibleBlockTypes) {
             let numerator = pBlock
             let pTokensGivenNotBlock = 1;
             
             for (const token of tokenSet) {
-                // Calculating probabilities
                 const tokenBlockKey = this.toKey([token, blockType]);
                 const tokenBlockFrequency = this.tokenBlockFrequencyMap.get(tokenBlockKey) || 0;
                 const tokenFrequency = this.tokenFrequencyMap.get(token) || 0;
@@ -100,13 +106,12 @@ class NaiveBayesClassifier implements MachineLearningModel {
 
             }
 
-            const denominator = numerator + pNotBlock * pTokensGivenNotBlock;
-            const probability = numerator / denominator;
+            const pTokens = numerator + pNotBlock * pTokensGivenNotBlock;
+            const probability = numerator / pTokens;
         
             blockTypeProbabilities.push({ block: blockType, probability });
 
         }
-        // Step 13
         return(blockTypeProbabilities.sort((prob1, prob2) => prob2.probability - prob1.probability))
     }
 
