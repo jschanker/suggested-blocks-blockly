@@ -26,13 +26,15 @@ export class BlockSuggestor {
   
   constructor(numBlocksPerCategory) {
     /**
-     * WorkspaceSvg variable references the workspace to store information
+     *variable references the workspace to store information
      */
     this.workspaceSvg = null; 
     /**
      * inputSource can be Element, a string, or null
+     * used to make suggestions for the blocks. 
+     * When it's a @type {string}, it becomes the problem description that's used. 
+     * When it's an @type {element}, we use an associated value of sorts.
      */
-
     this.inputSource = null;
 
     /**
@@ -59,7 +61,19 @@ export class BlockSuggestor {
     this.getMostUsed = this.getMostUsed.bind(this);
     this.getRecentlyUsed = this.getRecentlyUsed.bind(this);
     this.generateBlockData = this.generateBlockData.bind(this);
+    
   }
+
+
+
+  set description(newValue) {
+    this.inputSource = newValue
+  }
+
+  get description(){
+    return this.inputSource
+  }
+
 
   /**
    * Generates a list of the 10 most frequently used blocks, in order.
@@ -187,9 +201,11 @@ export class BlockSuggestor {
   }
 }
 
+
+
 /**
  * Main entry point to initialize the suggested blocks categories.
- * @param {Blockly.WorkspaceSvg} workspaceOrContainer the workspace to load into WorkspaceSvg, or an Element, or string
+ * @param {Blockly.WorkspaceSvg|Element|string} workspaceOrContainer the workspace to load into WorkspaceSvg, or an Element, or string
  * @param {number} numBlocksPerCategory how many blocks should be included per
  * category. Defaults to 10.
  * @param {boolean} waitForFinishedLoading whether to wait until we hear the
@@ -201,22 +217,45 @@ export const init = function (
   numBlocksPerCategory = 10,
   waitForFinishedLoading = true,
 ) {
-  let workspace;
+  let container;
   const suggestor = new BlockSuggestor(numBlocksPerCategory);
   if (workspaceOrContainer instanceof Blockly.WorkspaceSvg) {
-    workspace = workspaceOrContainer;
+    this.workspaceSvg = workspaceOrContainer;
   }
-  else if (typeof workspaceOrContainer === 'string') {
-    workspace =
-      document.getElementById(workspaceOrContainer) || document.querySelector(workspaceOrContainer);
-  } else {
-    workspace = workspaceOrContainer;
+  else {
+      if (typeof workspaceOrContainer === 'string') {
+        container =
+        document.getElementById(workspaceOrContainer) || document.querySelector(workspaceOrContainer);
+      }
+      else{
+        container = workspaceOrContainer;
+    }
+    
+    let textInputAndButtonContainer = document.createElement('div');
+    let blocklyContainer = document.createElement('div');
+ 
+    const button = document.createElement("button");
+    button.innerText = "Input"
+    const problemInput = document.createElement("input");
+        input.type = "text";
+        input.placeholder = "Enter problem here";
+
+    this.workspaceSvg = Blockly.inject(blocklyContainer);   
+    this.inputSource = problemInput;
+    textInputAndButtonContainer.appendChild(problemInput);
+    textInputAndButtonContainer.appendChild(button)
+
+
+    container.appendChild(textInputAndButtonContainer)
+    container.appendChild(blocklyContainer)
   }
+  
   workspace.registerToolboxCategoryCallback('MOST_USED', suggestor.getMostUsed);
   workspace.registerToolboxCategoryCallback(
     'RECENTLY_USED',
     suggestor.getRecentlyUsed,
   );
+
   
   // If user says not to wait to hear FINISHED_LOADING event,
   // then always respond to BLOCK_CREATE events.
