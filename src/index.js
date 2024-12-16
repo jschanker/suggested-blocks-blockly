@@ -272,7 +272,7 @@ export const init = function (
   if (!waitForFinishedLoading) suggestor.workspaceHasFinishedLoading = true;
   workspace.addChangeListener(suggestor.eventListener);
   suggestorLookup.set(workspace, suggestor);
-return workspace
+  return workspace
 };
 
 
