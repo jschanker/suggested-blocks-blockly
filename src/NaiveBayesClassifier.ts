@@ -1,4 +1,4 @@
-import MachineLearningModel from './IMachineLearningModel';
+import MachineLearningModel from './MachineLearningModel';
 import Tokenizer from './ITokenizer';
 import SingleWordTokenizer from './SingleWordTokenizer';
 import * as Blockly from 'blockly/core';
