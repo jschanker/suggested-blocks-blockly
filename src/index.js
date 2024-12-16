@@ -10,7 +10,7 @@
 'use strict';
 
 import * as Blockly from 'blockly/core';
-import MachineLearningModel from './IMachineLearningModel'
+import MachineLearningModel from './MachineLearningModel'
 
 /** Map from workspaces to BlockSuggestor objects. */
 const suggestorLookup = new WeakMap();
