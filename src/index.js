@@ -26,11 +26,11 @@ export class BlockSuggestor {
   
   constructor(numBlocksPerCategory) {
     /**
-     *variable references the workspace to store information
+     *references the workspace to store information
      */
     this.workspaceSvg = null; 
     /**
-     * @param {element|string|null} inputSource store the problem description 
+     * @param {Element|string|null} inputSource store the problem description 
      * that's used to make suggestions for the blocks
      * used to make suggestions for the blocks. 
      * When it's a @type {string}, it becomes the problem description that's used. 
@@ -219,11 +219,11 @@ export class BlockSuggestor {
  */
 export const init = function (
   workspaceOrContainer,
+  options = {},
   numBlocksPerCategory = 10,
   waitForFinishedLoading = true,
 ) {
-  // Variable to store the Blockly workspace instance
-  // Variable to store the container element
+  // stores the Blockly workspace instance
   let workspace
   let container;
   const suggestor = new BlockSuggestor(numBlocksPerCategory);
@@ -233,22 +233,19 @@ export const init = function (
   if (workspaceOrContainer instanceof Blockly.WorkspaceSvg) {
     workspace = workspaceOrContainer;
   }
+  // Container stores the container element or string
   else {
-      if (typeof workspaceOrContainer === 'string') {
-        container =
-        document.getElementById(workspaceOrContainer) || document.querySelector(workspaceOrContainer);
-      }
-      else{
-        container = workspaceOrContainer;
-    }
+    container = (typeof workspaceOrContainer === 'string') 
+    ? document.getElementById(workspaceOrContainer) || document.querySelector(workspaceOrContainer) 
+    : workspaceOrContainer;
     
-    let textInputAndButtonContainer = document.createElement('div');
-    let blocklyContainer = document.createElement('div');
+    const textInputAndButtonContainer = document.createElement('div');
+    const blocklyContainer = document.createElement('div');
     
     // Create a button element
     // Create an input element for problem input
     const button = document.createElement("button");
-    button.innerText = "Input"
+    button.innerText = "Get Suggested Blocks"
     const problemInput = document.createElement("input");
         problemInput.type = "text";
         problemInput.placeholder = "Enter problem here";
@@ -276,7 +273,7 @@ export const init = function (
   workspace.addChangeListener(suggestor.eventListener);
   suggestorLookup.set(workspace, suggestor);
 };
-
+return workspace
 /**
  * Custom serializer so that the block suggestor can save and later recall which
  * blocks have been used in a workspace.

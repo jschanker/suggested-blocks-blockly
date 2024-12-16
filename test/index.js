@@ -19,9 +19,7 @@ import * as SuggestedBlocks from '../src/index';
  * @returns {!Blockly.WorkspaceSvg} The created workspace.
  */
 function createWorkspace(blocklyDiv, options) {
-  const workspace = Blockly.inject(blocklyDiv, options);
-  SuggestedBlocks.init(blocklyDiv);
-  return workspace;
+  return SuggestedBlocks.init(blocklyDiv, options)
 }
 
 const customTheme = Blockly.Theme.defineTheme('classic_with_suggestions', {
