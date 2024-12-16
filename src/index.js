@@ -249,6 +249,15 @@ export const init = function (
     const problemInput = document.createElement("input");
         problemInput.type = "text";
         problemInput.placeholder = "Enter problem here";
+
+        button.addEventListener("click", () => {
+          const inputValue = problemInput.value;
+          if (inputValue) {
+              alert(`Suggested Blocks for: ${inputValue}`);
+          } else {
+              alert("Please enter a problem to get suggestions.");
+          }
+      });
     // Inject Blockly workspace into the 'blocklyContainer' div
     workspace = Blockly.inject(blocklyContainer);   
     this.inputSource = problemInput;
