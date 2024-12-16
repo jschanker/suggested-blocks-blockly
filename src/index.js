@@ -30,6 +30,10 @@ export class BlockSuggestor {
     */
     this.model = null;
     /**
+     * Machine learning model used to get the suggested blocks initialized to null
+     */
+    this.model = null;
+    /**
      * Saves the full JSON data for each block type the first time it's used.
      * This helps store what initial configuration / sub-blocks each block type
      * would be expected to have.
