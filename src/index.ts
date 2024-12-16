@@ -1,79 +1,40 @@
-/**
- * @license
- * Copyright 2022 Google LLC
- * SPDX-License-Identifier: Apache-2.0
- */
-
-/**
- * @fileoverview Utility functions for handling suggestions.
- */
-'use strict';
-
 import * as Blockly from 'blockly/core';
-import IMachineLearningModel from './IMachineLearningModel'
+import IMachineLearningModel from './IMachineLearningModel';
 
-/** Map from workspaces to BlockSuggestor objects. */
-const suggestorLookup = new WeakMap();
+const suggestorLookup = new WeakMap<Blockly.Workspace, BlockSuggestor>();
 
-/**
- * Class that tracks all blocks created in a workspace and suggests future
- * blocks to use.
- */
+
 export class BlockSuggestor {
-  /**
-   * Constructs a BlockSuggestor object.
-   * @param {number} numBlocksPerCategory the size of each toolbox category
-   */
-  constructor(numBlocksPerCategory) {
-   /**
-    * Machine learning model used to get the suggested blocks
-    */
-    this.model = null;
-    /**
-     * Machine learning model used to get the suggested blocks initialized to null
-     */
-    this.model = null;
-    /**
-     * Saves the full JSON data for each block type the first time it's used.
-     * This helps store what initial configuration / sub-blocks each block type
-     * would be expected to have.
-     */
-    this.defaultJsonForBlockLookup = {};
-    /**
-     * List of reently used block types
-     */
-    this.recentlyUsedBlocks = [];
-    /**
-     * Checks if the workspace is finished loading, to avoid taking action on
-     * all the BLOCK_CREATE events during workspace loading.
-     */
-    this.workspaceHasFinishedLoading = false;
-    /**
-     * Config parameter which sets the size of the toolbox categories.
-     */
+  public description?: string;
+  // Properties with explicit types
+  public model: IMachineLearningModel | null = null;
+  public defaultJsonForBlockLookup: Record<string, Blockly.utils.toolbox.BlockInfo> = {};
+  public recentlyUsedBlocks: string[] = [];
+  public workspaceHasFinishedLoading: boolean = false;
+  public numBlocksPerCategory: number;
+
+  constructor(numBlocksPerCategory: number) {
     this.numBlocksPerCategory = numBlocksPerCategory;
 
+    // Bind methods to `this`
     this.eventListener = this.eventListener.bind(this);
     this.getMostUsed = this.getMostUsed.bind(this);
     this.getRecentlyUsed = this.getRecentlyUsed.bind(this);
     this.generateBlockData = this.generateBlockData.bind(this);
   }
+
   /**
    * Sets the machine learning model to be used for block suggestions.
-   * @param {IMachineLearningModel} model The machine learning model instance to set.
    */
-  setModel(model) {
+  setModel(model: IMachineLearningModel): void {
     this.model = model;
   }
 
-  getSuggestedBlocks = function () {
-    let description = '';
-
-    if (typeof this.description === 'string') {
-      description = this.description;
-    } else if (this.description instanceof Element) {
-      description = this.description.value || this.description.innerText || '';
-    }
+  /**
+   * Generates block suggestions based on the current description.
+   */
+  getSuggestedBlocks = (): Blockly.utils.toolbox.BlockInfo[] => {
+    const description = typeof this.description === 'string' ? this.description : '';
 
     const suggestedBlocks = this.model
       ? this.model.getSuggestedBlocks(description)
@@ -84,32 +45,24 @@ export class BlockSuggestor {
   };
 
   /**
-   * Generates a list of the 10 most frequently used blocks, in order.
-   * Includes a secondary sort by most recent blocks.
-   * @returns {!Array<!Blockly.utils.toolbox.BlockInfo>}A list of block JSON
+   * Generates a list of the 10 most frequently used blocks.
    */
-  getMostUsed = function () {
-    // Store the frequency of each block, as well as the index first appears at.
-    const countMap = new Map();
-    const recencyMap = new Map();
-    for (const [index, key] of this.recentlyUsedBlocks.entries()) {
+  getMostUsed = (): Blockly.utils.toolbox.BlockInfo[] => {
+    const countMap = new Map<string, number>();
+    const recencyMap = new Map<string, number>();
+
+    this.recentlyUsedBlocks.forEach((key, index) => {
       countMap.set(key, (countMap.get(key) || 0) + 1);
       if (!recencyMap.has(key)) {
         recencyMap.set(key, index + 1);
       }
-    }
+    });
 
-    // Get a sorted list.
-    const freqUsedBlockTypes = [];
-    for (const key of countMap.keys()) {
-      freqUsedBlockTypes.push(key);
-    }
-    // Use recency as a tiebreak.
-    freqUsedBlockTypes.sort(
+    const freqUsedBlockTypes = Array.from(countMap.keys()).sort(
       (a, b) =>
-        countMap.get(b) -
-        countMap.get(a) +
-        0.01 * (recencyMap.get(a) - recencyMap.get(b)),
+        countMap.get(b)! -
+        countMap.get(a)! +
+        0.01 * (recencyMap.get(a)! - recencyMap.get(b)!)
     );
 
     return this.generateBlockData(freqUsedBlockTypes);
@@ -117,174 +70,123 @@ export class BlockSuggestor {
 
   /**
    * Generates a list of the 10 most recently used blocks.
-   * @returns {Array <object>} A list of block JSON objects
    */
-  getRecentlyUsed = function () {
-    const uniqueRecentBlocks = [...new Set(this.recentlyUsedBlocks)];
-    const recencyMap = new Map();
-    for (const [index, key] of this.recentlyUsedBlocks.entries()) {
+  getRecentlyUsed = (): Blockly.utils.toolbox.BlockInfo[] => {
+    const uniqueRecentBlocks = Array.from(new Set(this.recentlyUsedBlocks));
+    const recencyMap = new Map<string, number>();
+
+    this.recentlyUsedBlocks.forEach((key, index) => {
       if (!recencyMap.has(key)) {
         recencyMap.set(key, index + 1);
       }
-    }
-    uniqueRecentBlocks.sort((a, b) => recencyMap[a] - recencyMap[b]);
+    });
+
+    uniqueRecentBlocks.sort((a, b) => recencyMap.get(a)! - recencyMap.get(b)!);
+
     return this.generateBlockData(uniqueRecentBlocks);
   };
 
   /**
-   * Converts a list of block types to a full-fledge list of block data.
-   * @param {Array<string>} blockTypeList the list of block types
-   * @returns {Array<JSON>} the block data list
+   * Converts block types to block data.
    */
-  generateBlockData = function (blockTypeList) {
-    const blockList = blockTypeList
-      .slice(0, this.numBlocksPerCategory)
-      .map((key) => {
-        const json = this.defaultJsonForBlockLookup[key] || {};
-        json['kind'] = 'BLOCK';
-        json['type'] = key;
-        json['x'] = null;
-        json['y'] = null;
-        return json;
-      });
-
-    if (blockList.length == 0) {
+  generateBlockData = (
+    blockTypeList: string[]
+  ): (Blockly.utils.toolbox.BlockInfo | { kind: 'LABEL'; text: string })[] => {
+    const blockList = blockTypeList.slice(0, this.numBlocksPerCategory).map((key) => {
+      const json = this.defaultJsonForBlockLookup[key] || {};
+      return {
+        ...json,
+        kind: 'BLOCK',
+        type: key,
+        x: undefined,
+        y: undefined,
+      };
+    });
+  
+    if (blockList.length === 0) {
       blockList.push({
         kind: 'LABEL',
         text: 'No blocks have been used yet!',
-      });
+      } as any);      
     }
+  
     return blockList;
   };
-
+  
   /**
-   * Loads the state of this object from a serialized JSON.
-   * @param {object} data the serialized data payload to load from
+   * Event listener for workspace events.
    */
-  loadFromSerializedData(data) {
-    this.defaultJsonForBlockLookup = data.defaultJsonForBlockLookup;
-    this.recentlyUsedBlocks = data.recentlyUsedBlocks;
-  }
-
-  /**
-   * Saves the state of this object to a serialized JSON.
-   * @returns {object} a serialized data object including this object's state
-   */
-  saveToSerializedData() {
-    return {
-      defaultJsonForBlockLookup: this.defaultJsonForBlockLookup,
-      recentlyUsedBlocks: this.recentlyUsedBlocks,
-    };
-  }
-
-  /**
-   * Resets the internal state of this object.
-   */
-  clearPriorBlockData() {
-    this.defaultJsonForBlockLookup = {};
-    this.recentlyUsedBlocks = [];
-  }
-
-  /**
-   * Callback for when the workspace sends out events.
-   * @param {!Blockly.Events.Abstract} e the event object
-   */
-  eventListener(e) {
-    if (e.type == Blockly.Events.FINISHED_LOADING) {
+  eventListener(e: Blockly.Events.Abstract): void {
+    if (e.type === Blockly.Events.FINISHED_LOADING) {
       this.workspaceHasFinishedLoading = true;
       return;
     }
+
     if (
-      e.type == Blockly.Events.BLOCK_CREATE &&
-      this.workspaceHasFinishedLoading
+      e.type === Blockly.Events.BLOCK_CREATE &&
+      this.workspaceHasFinishedLoading &&
+      (e as any).json?.type
     ) {
-      const newBlockType = e.json.type;
-      // If this is the first time creating this block, store its default
-      // configuration so we know how exactly to render it in the toolbox.
+      const newBlockType = (e as any).json.type;
+    
       if (!this.defaultJsonForBlockLookup[newBlockType]) {
-        this.defaultJsonForBlockLookup[newBlockType] = e.json;
+        this.defaultJsonForBlockLookup[newBlockType] = (e as any).json;
       }
       this.recentlyUsedBlocks.unshift(newBlockType);
     }
+    
+    
+    
   }
-}
+    saveToSerializedData(): object {
+      return {
+        recentlyUsedBlocks: this.recentlyUsedBlocks,
+        defaultJsonForBlockLookup: this.defaultJsonForBlockLookup,
+      };
+    }
 
-/**
- * Main entry point to initialize the suggested blocks categories.
- * @param {Blockly.WorkspaceSvg} workspace the workspace to load into
- * @param {number} numBlocksPerCategory how many blocks should be included per
- * category. Defaults to 10.
- * @param {boolean} waitForFinishedLoading whether to wait until we hear the
- * FINISHED_LOADING event before responding to BLOCK_CREATE events. Set to false
- * if you disable events during initial load. Defaults to true.
- */
-export const init = function (
-  workspace,
-  numBlocksPerCategory = 10,
-  waitForFinishedLoading = true,
-) {
-  const suggestor = new BlockSuggestor(numBlocksPerCategory);
-  workspace.registerToolboxCategoryCallback(
-    'AI_SUGGESTED',
-    suggestor.getSuggestedBlocks,
-  );
-  workspace.registerToolboxCategoryCallback('MOST_USED', suggestor.getMostUsed);
-  workspace.registerToolboxCategoryCallback(
-    'RECENTLY_USED',
-    suggestor.getRecentlyUsed,
-  );
-  // If user says not to wait to hear FINISHED_LOADING event,
-  // then always respond to BLOCK_CREATE events.
-  if (!waitForFinishedLoading) suggestor.workspaceHasFinishedLoading = true;
-  workspace.addChangeListener(suggestor.eventListener);
-  suggestorLookup.set(workspace, suggestor);
-};
+    loadFromSerializedData(state: any): void {
+      if (state.recentlyUsedBlocks) {
+        this.recentlyUsedBlocks = state.recentlyUsedBlocks;
+      }
+      if (state.defaultJsonForBlockLookup) {
+        this.defaultJsonForBlockLookup = state.defaultJsonForBlockLookup;
+      }
+    }
 
-/**
- * Custom serializer so that the block suggestor can save and later recall which
- * blocks have been used in a workspace.
- */
-class BlockSuggestorSerializer {
-  /** Constructs the block suggestor serializer */
-  constructor() {
-    /**
-     * The priority for deserializing block suggestion data.
-     * Should be less than the priority for blocks so that this state is
-     * applied after the blocks are loaded.
-     * @type {number}
-     */
-    this.priority = Blockly.serialization.priorities.BLOCKS - 10;
+    clearPriorBlockData(): void {
+      this.recentlyUsedBlocks = [];
+      this.defaultJsonForBlockLookup = {};
+    }
+    
+    
   }
 
-  /**
-   * Saves a target workspace's state to serialized JSON.
-   * @param {Blockly.Workspace} workspace the workspace to save
-   * @returns {object|undefined} the serialized JSON if present
-   */
-  save(workspace) {
-    return suggestorLookup.get(workspace)?.saveToSerializedData();
+
+class BlockSuggestorSerializer implements Blockly.serialization.ISerializer {
+  priority = Blockly.serialization.priorities.BLOCKS - 10;
+
+  save(workspace: Blockly.Workspace): object | null {
+    const suggestor = suggestorLookup.get(workspace);
+    return suggestor ? suggestor.saveToSerializedData() : null;
   }
 
-  /**
-   * Loads a serialized state into the target workspace.
-   * @param {object} state the serialized state JSON
-   * @param {Blockly.Workspace} workspace the workspace to load into
-   */
-  load(state, workspace) {
-    suggestorLookup.get(workspace)?.loadFromSerializedData(state);
+  load(state: object, workspace: Blockly.Workspace): void {
+    const suggestor = suggestorLookup.get(workspace);
+    if (suggestor) {
+      suggestor.loadFromSerializedData(state);
+    }
   }
 
-  /**
-   * Resets the state of a workspace.
-   * @param {Blockly.Workspace} workspace the workspace to reset
-   */
-  clear(workspace) {
-    suggestorLookup.get(workspace)?.clearPriorBlockData();
+  clear(workspace: Blockly.Workspace): void {
+    const suggestor = suggestorLookup.get(workspace);
+    if (suggestor) {
+      suggestor.clearPriorBlockData();
+    }
   }
 }
 
 Blockly.serialization.registry.register(
-  'suggested-blocks', // Name
-  new BlockSuggestorSerializer(),
+  'suggested-blocks',
+  new BlockSuggestorSerializer()
 );
-
