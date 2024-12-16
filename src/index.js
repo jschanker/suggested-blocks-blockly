@@ -259,7 +259,7 @@ export const init = function (
           }
       });
     // Inject Blockly workspace into the 'blocklyContainer' div
-    workspace = Blockly.inject(blocklyContainer);   
+    workspace = Blockly.inject(blocklyContainer,options);   
     this.inputSource = problemInput;
     textInputAndButtonContainer.appendChild(problemInput);
     textInputAndButtonContainer.appendChild(button)
