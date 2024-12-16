@@ -45,6 +45,7 @@
     "@blockly/dev-tools": "^8.0.6",
     "@eslint/js": "^9.17.0",
     "@types/jest": "^29.5.14",
+    "@types/node": "^22.10.2",
     "chai": "^5.1.1",
     "eslint": "^8.57.1",
     "eslint-config-google": "^0.14.0",
@@ -55,7 +56,8 @@
     "prettier": "^3.4.2",
     "sinon": "^14.0.0",
     "ts-jest": "^29.2.5",
-    "typescript": "^5.3.3",
+    "ts-loader": "^9.5.1",
+    "typescript": "^5.7.2",
     "typescript-eslint": "^8.18.0"
   },
   "peerDependencies": {
