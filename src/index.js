@@ -34,7 +34,7 @@ export class BlockSuggestor {
      * that's used to make suggestions for the blocks
      * used to make suggestions for the blocks. 
      * When it's a @type {string}, it becomes the problem description that's used. 
-     * When it's an @type {element}, we use an associated value of sorts.
+     * When it's an @type {Element}, we use an associated value of sorts.
      */
     this.inputSource = null;
 
@@ -253,10 +253,17 @@ export const init = function (
         button.addEventListener("click", () => {
           const inputValue = problemInput.value;
           if (inputValue) {
-              alert(`Suggested Blocks for: ${inputValue}`);
-          } else {
-              alert("Please enter a problem to get suggestions.");
-          }
+            // Assuming workspaceSvg is a reference to the Blockly workspace
+            const flyout = workspaceSvg.getFlyout(); // Get the IFlyout instance
+            if (flyout && flyout.show) {
+                // Show the AI_SUGGESTED category in the flyout
+                flyout.show('AI_SUGGESTED');
+            } else {
+                console.error("Flyout or show method not available on workspaceSvg.");
+            }
+        } else {
+            alert("Please enter a problem to get suggestions.");
+        }
       });
     // Inject Blockly workspace into the 'blocklyContainer' div
     workspace = Blockly.inject(blocklyContainer,options);   
