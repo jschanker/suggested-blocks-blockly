@@ -25,7 +25,7 @@ export class BlockSuggestor {
    */
   constructor(numBlocksPerCategory) {
    /**
-    * Machine learning model used to get the suggested blocks initialized to null 
+    * Machine learning model used to get the suggested blocks
     */
     this.model = null;
     /**
@@ -55,7 +55,7 @@ export class BlockSuggestor {
   }
   /**
    * Sets the machine learning model to be used for block suggestions.
-   * @param {object} model The machine learning model instance to set.
+   * @param {IMachineLearningModel} model The machine learning model instance to set.
    */
   setModel(model) {
     this.model = model;
