@@ -53,7 +53,10 @@ export class BlockSuggestor {
     this.getRecentlyUsed = this.getRecentlyUsed.bind(this);
     this.generateBlockData = this.generateBlockData.bind(this);
   }
-
+  /**
+   * Sets the machine learning model for the system.
+   * @param {Object} model - The model to be set, typically an instance of a machine learning model.
+   */
   setModel(model) {
     this.model = model;
   }

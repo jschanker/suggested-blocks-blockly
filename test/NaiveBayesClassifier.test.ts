@@ -1,6 +1,5 @@
 import NaiveBayesClassifier from "../src/NaiveBayesClassifier";
 import SingleWordTokenizer from "../src/SingleWordTokenizer";
-import * as Blockly from "blockly/core";
 
 describe("NaiveBayesClassifier", () => {
     it("should tokenize the description using the provided tokenizer", () => {
@@ -87,7 +86,7 @@ describe("NaiveBayesClassifier", () => {
         const classifier = new NaiveBayesClassifier({});
         classifier["decodeKey"] = jest.fn((key) => JSON.parse(key));
 
-        const usedTokenBlockPairs: [string, number][] = [
+        const usedTokenBlockPairs: Array<[string, number]> = [
             ['["hello", "text_block"]', 5],
             ['["world", "logic_block"]', 3],
             ['["hello", "logic_block"]', 2],
@@ -109,7 +108,7 @@ describe("NaiveBayesClassifier", () => {
         const classifier = new NaiveBayesClassifier({});
         classifier["decodeKey"] = jest.fn((key) => JSON.parse(key));
 
-        const usedTokenBlockPairs: [string, number][] = [];
+        const usedTokenBlockPairs: Array<[string, number]> = []
 
         const expectedPossibleBlockTypes = new Set();
 
@@ -342,7 +341,7 @@ describe("NaiveBayesClassifier", () => {
         ]);
         classifier["totalDescriptions"] = 20;
 
-        const blockTypeProbabilities: { block: string; probability: number }[] = [];
+        const blockTypeProbabilities: Array<{ block: string; probability: number }> = [];
         const pBlock = 0.5;
         const pNotBlock = 0.5;
 
