@@ -272,8 +272,10 @@ export const init = function (
   if (!waitForFinishedLoading) suggestor.workspaceHasFinishedLoading = true;
   workspace.addChangeListener(suggestor.eventListener);
   suggestorLookup.set(workspace, suggestor);
-};
 return workspace
+};
+
+
 /**
  * Custom serializer so that the block suggestor can save and later recall which
  * blocks have been used in a workspace.
