@@ -254,7 +254,7 @@ export const init = function (
           const inputValue = problemInput.value;
           if (inputValue) {
             // Assuming workspaceSvg is a reference to the Blockly workspace
-            const flyout = workspaceSvg.getFlyout(); // Get the IFlyout instance
+            const flyout = this.workspaceSvg.getFlyout(); // Get the IFlyout instance
             if (flyout && flyout.show) {
                 // Show the AI_SUGGESTED category in the flyout
                 flyout.show('AI_SUGGESTED');
