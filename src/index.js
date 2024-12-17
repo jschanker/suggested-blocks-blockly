@@ -26,6 +26,11 @@ export class BlockSuggestor {
   
   constructor(numBlocksPerCategory) {
     /**
+
+     * Machine learning model used to get the suggested blocks initialized to null
+     */
+    this.model = null;
+
      *references the workspace to store information
      */
     this.workspaceSvg = null; 
@@ -64,6 +69,30 @@ export class BlockSuggestor {
     this.generateBlockData = this.generateBlockData.bind(this);
     
   }
+  /**
+   * Sets the machine learning model for the system.
+   * @param {Object} model - The model to be set, typically an instance of a machine learning model.
+   */
+  setModel(model) {
+    this.model = model;
+  }
+
+  getSuggestedBlocks = function () {
+    let description = '';
+
+    if (typeof this.description === 'string') {
+      description = this.description;
+    } else if (this.description instanceof Element) {
+      description = this.description.value || this.description.innerText || '';
+    }
+
+    const suggestedBlocks = this.model
+      ? this.model.getSuggestedBlocks(description)
+      : [];
+
+    const blockTypes = suggestedBlocks.map((block) => block.type);
+    return this.generateBlockData(blockTypes);
+  };
 
 
   /**
@@ -227,6 +256,9 @@ export const init = function (
   let workspace
   let container;
   const suggestor = new BlockSuggestor(numBlocksPerCategory);
+
+  
+
   // Check if 'workspaceOrContainer' is already a Blockly workspace
   // If 'workspaceOrContainer' is a string, attempt to find the container element
   // If 'workspaceOrContainer' is not a string, treat it as a container element
@@ -276,6 +308,11 @@ export const init = function (
     container.appendChild(blocklyContainer)
   }
   this.workspaceSvg = workspace;
+
+  workspace.registerToolboxCategoryCallback(
+  'AI_SUGGESTED',
+  suggestor.getSuggestedBlocks,
+  );
   workspace.registerToolboxCategoryCallback('MOST_USED', suggestor.getMostUsed);
   workspace.registerToolboxCategoryCallback(
     'RECENTLY_USED',
