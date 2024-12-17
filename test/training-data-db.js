@@ -1,4 +1,4 @@
-data= [ 
+[ 
     {
     "description": "Get the last letter of a text input",
     "blocks": {
@@ -219,5 +219,7 @@ data= [
     ]
   }]
 
+/* to add in index.js: importNaiveBayesClassifier, const trainingdata = JSON.parse(training-data-db.json),
+NaiveBayesClassifier.train(trainingdata) */
   
   
