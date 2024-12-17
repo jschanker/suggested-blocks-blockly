@@ -23,11 +23,26 @@ export class BlockSuggestor {
    * Constructs a BlockSuggestor object.
    * @param {number} numBlocksPerCategory the size of each toolbox category
    */
+  
   constructor(numBlocksPerCategory) {
     /**
+
      * Machine learning model used to get the suggested blocks initialized to null
      */
     this.model = null;
+
+     *references the workspace to store information
+     */
+    this.workspaceSvg = null; 
+    /**
+     * @param {Element|string|null} inputSource store the problem description 
+     * that's used to make suggestions for the blocks
+     * used to make suggestions for the blocks. 
+     * When it's a @type {string}, it becomes the problem description that's used. 
+     * When it's an @type {Element}, we use an associated value of sorts.
+     */
+    this.inputSource = null;
+
     /**
      * Saves the full JSON data for each block type the first time it's used.
      * This helps store what initial configuration / sub-blocks each block type
@@ -52,6 +67,7 @@ export class BlockSuggestor {
     this.getMostUsed = this.getMostUsed.bind(this);
     this.getRecentlyUsed = this.getRecentlyUsed.bind(this);
     this.generateBlockData = this.generateBlockData.bind(this);
+    
   }
   /**
    * Sets the machine learning model for the system.
@@ -77,6 +93,21 @@ export class BlockSuggestor {
     const blockTypes = suggestedBlocks.map((block) => block.type);
     return this.generateBlockData(blockTypes);
   };
+
+
+  /**
+   * Setter for the problem description
+   */
+  set description(newValue) {
+    this.inputSource = newValue
+  }
+  /**
+   * Getter for the problem description
+   */
+  get description(){
+    return this.inputSource
+  }
+
 
   /**
    * Generates a list of the 10 most frequently used blocks, in order.
@@ -204,9 +235,11 @@ export class BlockSuggestor {
   }
 }
 
+
+
 /**
  * Main entry point to initialize the suggested blocks categories.
- * @param {Blockly.WorkspaceSvg} workspace the workspace to load into
+ * @param {Blockly.WorkspaceSvg|Element|string} workspaceOrContainer the workspace to load into WorkspaceSvg, or an Element, or string
  * @param {number} numBlocksPerCategory how many blocks should be included per
  * category. Defaults to 10.
  * @param {boolean} waitForFinishedLoading whether to wait until we hear the
@@ -214,26 +247,87 @@ export class BlockSuggestor {
  * if you disable events during initial load. Defaults to true.
  */
 export const init = function (
-  workspace,
+  workspaceOrContainer,
+  options = {},
   numBlocksPerCategory = 10,
   waitForFinishedLoading = true,
 ) {
+  // stores the Blockly workspace instance
+  let workspace
+  let container;
   const suggestor = new BlockSuggestor(numBlocksPerCategory);
+
+  
+
+  // Check if 'workspaceOrContainer' is already a Blockly workspace
+  // If 'workspaceOrContainer' is a string, attempt to find the container element
+  // If 'workspaceOrContainer' is not a string, treat it as a container element
+  if (workspaceOrContainer instanceof Blockly.WorkspaceSvg) {
+    workspace = workspaceOrContainer;
+  }
+  // Container stores the container element or string
+  else {
+    container = (typeof workspaceOrContainer === 'string') 
+    ? document.getElementById(workspaceOrContainer) || document.querySelector(workspaceOrContainer) 
+    : workspaceOrContainer;
+    
+    const textInputAndButtonContainer = document.createElement('div');
+    const blocklyContainer = document.createElement('div');
+    
+    // Create a button element
+    // Create an input element for problem input
+    const button = document.createElement("button");
+    button.innerText = "Get Suggested Blocks"
+    const problemInput = document.createElement("input");
+        problemInput.type = "text";
+        problemInput.placeholder = "Enter problem here";
+
+        button.addEventListener("click", () => {
+          const inputValue = problemInput.value;
+          if (inputValue) {
+            // Assuming workspaceSvg is a reference to the Blockly workspace
+            const flyout = this.workspaceSvg.getFlyout(); // Get the IFlyout instance
+            if (flyout && flyout.show) {
+                // Show the AI_SUGGESTED category in the flyout
+                flyout.show('AI_SUGGESTED');
+            } else {
+                console.error("Flyout or show method not available on workspaceSvg.");
+            }
+        } else {
+            alert("Please enter a problem to get suggestions.");
+        }
+      });
+    // Inject Blockly workspace into the 'blocklyContainer' div
+    workspace = Blockly.inject(blocklyContainer,options);   
+    this.inputSource = problemInput;
+    textInputAndButtonContainer.appendChild(problemInput);
+    textInputAndButtonContainer.appendChild(button)
+
+    // Append the text input container and Blockly container to the main container
+    container.appendChild(textInputAndButtonContainer)
+    container.appendChild(blocklyContainer)
+  }
+  this.workspaceSvg = workspace;
+
   workspace.registerToolboxCategoryCallback(
-    'AI_SUGGESTED',
-    suggestor.getSuggestedBlocks,
+  'AI_SUGGESTED',
+  suggestor.getSuggestedBlocks,
   );
   workspace.registerToolboxCategoryCallback('MOST_USED', suggestor.getMostUsed);
   workspace.registerToolboxCategoryCallback(
     'RECENTLY_USED',
     suggestor.getRecentlyUsed,
   );
+
+  
   // If user says not to wait to hear FINISHED_LOADING event,
   // then always respond to BLOCK_CREATE events.
   if (!waitForFinishedLoading) suggestor.workspaceHasFinishedLoading = true;
   workspace.addChangeListener(suggestor.eventListener);
   suggestorLookup.set(workspace, suggestor);
+  return workspace
 };
+
 
 /**
  * Custom serializer so that the block suggestor can save and later recall which
