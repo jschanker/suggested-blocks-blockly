@@ -11,7 +11,8 @@
 import * as Blockly from 'blockly';
 import {toolboxCategories, createPlayground} from '@blockly/dev-tools';
 import * as SuggestedBlocks from '../src/index';
-
+import 'training-data-db.json'
+import NaiveBayesClassifier from NaiveBayesClassifier
 /**
  * Create a workspace.
  * @param {HTMLElement} blocklyDiv The blockly container div.
@@ -69,3 +70,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     ),
   );
 });
+
+const trainingData = JSON.parse('training-data-db.json')
+NaiveBayesClassifier.train(trainingData)
