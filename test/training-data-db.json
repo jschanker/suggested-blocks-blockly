@@ -217,6 +217,75 @@
         "id": "qTLspX#{dp.LzE~I`$(,"
       }
     ]
+  },
+  {
+    "description": "Turn user input uppercase",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "text_print",
+          "id": "~EQs.#vM63rD0BxdDEzH",
+          "x": 263,
+          "y": 263,
+          "inputs": {
+            "TEXT": {
+              "shadow": {
+                "type": "text",
+                "id": "%?auz[76M|)wL[@sy(8+",
+                "fields": {
+                  "TEXT": "abc"
+                }
+              },
+              "block": {
+                "type": "text_changeCase",
+                "id": "R*Ar`8co)O`q$H!Kz^{8",
+                "fields": {
+                  "CASE": "UPPERCASE"
+                },
+                "inputs": {
+                  "TEXT": {
+                    "shadow": {
+                      "type": "text",
+                      "id": "7`;(Ij8L5%,839+Ty$R_",
+                      "fields": {
+                        "TEXT": "abc"
+                      }
+                    },
+                    "block": {
+                      "type": "text_prompt_ext",
+                      "id": "l,7Y93K94CK4X^df4v|k",
+                      "extraState": "<mutation type=\"TEXT\"></mutation>",
+                      "fields": {
+                        "TYPE": "TEXT"
+                      },
+                      "inputs": {
+                        "TEXT": {
+                          "shadow": {
+                            "type": "text",
+                            "id": "Y@^cehhV-IV]v;;`{$!D",
+                            "fields": {
+                              "TEXT": "abc"
+                            }
+                          },
+                          "block": {
+                            "type": "text",
+                            "id": "16/=[4o8A0_X@I~jTjKT",
+                            "fields": {
+                              "TEXT": "Type a sentence to make it uppercase."
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
   }]
 
   
