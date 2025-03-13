@@ -10,7 +10,7 @@ export class BlockSuggestor {
   private model: IMachineLearningModel | null = null;
   private defaultJsonForBlockLookup: Record<string, Blockly.utils.toolbox.BlockInfo> = {};
   private recentlyUsedBlocks: string[] = [];
-  private workspaceHasFinishedLoading: boolean = false;
+  private workspaceHasFinishedLoading = false;
   private numBlocksPerCategory: number;
 
   constructor(numBlocksPerCategory: number) {
@@ -25,6 +25,7 @@ export class BlockSuggestor {
 
   /**
    * Sets the machine learning model to be used for block suggestions.
+   *
    * @param model - The machine learning model to set
    */ 
   setModel(model: IMachineLearningModel): void {
@@ -61,9 +62,9 @@ export class BlockSuggestor {
 
     const freqUsedBlockTypes = Array.from(countMap.keys()).sort(
       (a, b) =>
-        countMap.get(b)! -
-        countMap.get(a)! +
-        0.01 * (recencyMap.get(a)! - recencyMap.get(b)!)
+        countMap.get(b) -
+        countMap.get(a) +
+        0.01 * (recencyMap.get(a) - recencyMap.get(b))
     );
 
     return this.generateBlockData(freqUsedBlockTypes);
@@ -82,17 +83,18 @@ export class BlockSuggestor {
       }
     });
 
-    uniqueRecentBlocks.sort((a, b) => recencyMap.get(a)! - recencyMap.get(b)!);
+    uniqueRecentBlocks.sort((a, b) => recencyMap.get(a) - recencyMap.get(b));
 
     return this.generateBlockData(uniqueRecentBlocks);
   };
 
   /**
    * Converts block types to block data.
+   *
    * @param blockTypeList - The list of block types to convert
    */
   generateBlockData = (
-    blockTypeList: Array<string>
+    blockTypeList: [string]
   ): Array<Blockly.utils.toolbox.BlockInfo | { kind: 'LABEL'; text: string }> => {
     const blockList = blockTypeList.slice(0, this.numBlocksPerCategory).map((key) => {
       const json = this.defaultJsonForBlockLookup[key] || {};
@@ -109,7 +111,7 @@ export class BlockSuggestor {
       blockList.push({
         kind: 'LABEL',
         text: 'No blocks have been used yet!',
-      } as any);      
+      });      
     }
   
     return blockList;
@@ -117,6 +119,8 @@ export class BlockSuggestor {
   
   /**
    * Event listener for workspace events.
+   *
+   * @param e - The event object for workspace events
    */
   eventListener(e: Blockly.Events.Abstract): void {
     if (e.type === Blockly.Events.FINISHED_LOADING) {
@@ -127,9 +131,9 @@ export class BlockSuggestor {
     if (
       e.type === Blockly.Events.BLOCK_CREATE &&
       this.workspaceHasFinishedLoading &&
-      (e as any).json?.type
+      (e).json?.type
     ) {
-      const newBlockType = (e as any).json.type;
+      const newBlockType = (e).json.type;
     
       if (!this.defaultJsonForBlockLookup[newBlockType]) {
         this.defaultJsonForBlockLookup[newBlockType] = (e as any).json;
