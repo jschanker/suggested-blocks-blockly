@@ -14,7 +14,7 @@ export class BlockSuggestor {
   private numBlocksPerCategory: number;
 
   constructor(numBlocksPerCategory: number) {
-    private this.numBlocksPerCategory = numBlocksPerCategory;
+    this.numBlocksPerCategory = numBlocksPerCategory;
 
     // Bind methods to `this`
     this.eventListener = this.eventListener.bind(this);
