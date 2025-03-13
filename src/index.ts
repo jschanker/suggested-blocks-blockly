@@ -5,16 +5,16 @@ const suggestorLookup = new WeakMap<Blockly.Workspace, BlockSuggestor>();
 
 
 export class BlockSuggestor {
-  public description?: string;
+  private description?: string;
   // Properties with explicit types
-  public model: IMachineLearningModel | null = null;
-  public defaultJsonForBlockLookup: Record<string, Blockly.utils.toolbox.BlockInfo> = {};
-  public recentlyUsedBlocks: string[] = [];
-  public workspaceHasFinishedLoading: boolean = false;
-  public numBlocksPerCategory: number;
+  private model: IMachineLearningModel | null = null;
+  private defaultJsonForBlockLookup: Record<string, Blockly.utils.toolbox.BlockInfo> = {};
+  private recentlyUsedBlocks: string[] = [];
+  private workspaceHasFinishedLoading: boolean = false;
+  private numBlocksPerCategory: number;
 
   constructor(numBlocksPerCategory: number) {
-    this.numBlocksPerCategory = numBlocksPerCategory;
+    private this.numBlocksPerCategory = numBlocksPerCategory;
 
     // Bind methods to `this`
     this.eventListener = this.eventListener.bind(this);
@@ -25,7 +25,8 @@ export class BlockSuggestor {
 
   /**
    * Sets the machine learning model to be used for block suggestions.
-   */
+   * @param model - The machine learning model to set
+   */ 
   setModel(model: IMachineLearningModel): void {
     this.model = model;
   }
@@ -88,10 +89,11 @@ export class BlockSuggestor {
 
   /**
    * Converts block types to block data.
+   * @param blockTypeList - The list of block types to convert
    */
   generateBlockData = (
-    blockTypeList: string[]
-  ): (Blockly.utils.toolbox.BlockInfo | { kind: 'LABEL'; text: string })[] => {
+    blockTypeList: Array<string>
+  ): Array<Blockly.utils.toolbox.BlockInfo | { kind: 'LABEL'; text: string }> => {
     const blockList = blockTypeList.slice(0, this.numBlocksPerCategory).map((key) => {
       const json = this.defaultJsonForBlockLookup[key] || {};
       return {
