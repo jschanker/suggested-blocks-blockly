@@ -91,7 +91,10 @@ class NaiveBayesClassifier implements MachineLearningModel {
       }),
     );
 
-    const blockTypeProbabilities: {blockType: string, probability: number}[]=[];
+    const blockTypeProbabilities: Array<{
+      blockType: string;
+      probability: number;
+    }> = [];
     const pBlock = 0.5;
     const pNotBlock = 1 - pBlock;
 
@@ -124,9 +127,9 @@ class NaiveBayesClassifier implements MachineLearningModel {
       const probability = numerator / pTokens;
       blockTypeProbabilities.push({blockType, probability});
     }
-    return blockTypeProbabilities.sort(
-      (prob1, prob2) => prob2.probability - prob1.probability
-    ).map(blocktype => workspace.newBlock(blocktype.blockType));
+    return blockTypeProbabilities
+      .sort((prob1, prob2) => prob2.probability - prob1.probability)
+      .map((blocktype) => workspace.newBlock(blocktype.blockType));
   }
 }
 
