@@ -71,7 +71,10 @@ class NaiveBayesClassifier implements MachineLearningModel {
     }
   }
 
-  getSuggestedBlocks(description: string): Blockly.Block[] {
+  getSuggestedBlocks(
+    description: string,
+    workspace: Blockly.Workspace,
+  ): Blockly.Block[] {
     const descriptionTokens = this.tokenizer.tokenize(description);
     const tokenSet = new Set(descriptionTokens);
     const usedTokenBlockPairs = Array.from(
@@ -88,7 +91,10 @@ class NaiveBayesClassifier implements MachineLearningModel {
       }),
     );
 
-    const blockTypeProbabilities = [];
+    const blockTypeProbabilities: Array<{
+      blockType: string;
+      probability: number;
+    }> = [];
     const pBlock = 0.5;
     const pNotBlock = 1 - pBlock;
 
@@ -119,12 +125,11 @@ class NaiveBayesClassifier implements MachineLearningModel {
 
       const pTokens = numerator + pNotBlock * pTokensGivenNotBlock;
       const probability = numerator / pTokens;
-
-      blockTypeProbabilities.push({block: blockType, probability});
+      blockTypeProbabilities.push({blockType, probability});
     }
-    return blockTypeProbabilities.sort(
-      (prob1, prob2) => prob2.probability - prob1.probability,
-    );
+    return blockTypeProbabilities
+      .sort((prob1, prob2) => prob2.probability - prob1.probability)
+      .map((blocktype) => workspace.newBlock(blocktype.blockType));
   }
 }
 

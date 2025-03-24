@@ -23,17 +23,17 @@ export class BlockSuggestor {
    * Constructs a BlockSuggestor object.
    * @param {number} numBlocksPerCategory the size of each toolbox category
    */
-  
   constructor(numBlocksPerCategory) {
     /**
-
      * Machine learning model used to get the suggested blocks initialized to null
      */
     this.model = null;
 
-     *references the workspace to store information
-     */
+     /**
+      * References the workspace to store information 
+      */
     this.workspaceSvg = null; 
+
     /**
      * @param {Element|string|null} inputSource store the problem description 
      * that's used to make suggestions for the blocks
@@ -64,6 +64,7 @@ export class BlockSuggestor {
     this.numBlocksPerCategory = numBlocksPerCategory;
 
     this.eventListener = this.eventListener.bind(this);
+    this.getSuggestedBlocks = this.getSuggestedBlocks.bind(this);
     this.getMostUsed = this.getMostUsed.bind(this);
     this.getRecentlyUsed = this.getRecentlyUsed.bind(this);
     this.generateBlockData = this.generateBlockData.bind(this);
