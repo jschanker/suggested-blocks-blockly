@@ -43,6 +43,8 @@ export class BlockSuggestor {
      * Config parameter which sets the size of the toolbox categories.
      */
     this.numBlocksPerCategory = numBlocksPerCategory;
+    this.workspace = null;
+    this.inputSource = null; // Optional input description element or string
 
     this.eventListener = this.eventListener.bind(this);
     this.getMostUsed = this.getMostUsed.bind(this);
@@ -186,11 +188,48 @@ export class BlockSuggestor {
  * if you disable events during initial load. Defaults to true.
  */
 export const init = function (
-  workspace,
+  workspaceOrContainer,
   numBlocksPerCategory = 10,
   waitForFinishedLoading = true,
 ) {
+  let workspace = null;
+  let inputSource = null;
+
+  if (workspaceOrContainer instanceof Blockly.WorkspaceSvg) {
+    workspace = workspaceOrContainer;
+  } else {
+    let container = null;
+    if (typeof workspaceOrContainer === 'string') {
+      container = document.getElementById(workspaceOrContainer);
+    } else if (workspaceOrContainer instanceof Element) {
+      container = workspaceOrContainer;
+    }
+    if (!container) throw new Error('Invalid workspace container');
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Describe your problem...';
+    input.style.display = 'block';
+    input.style.marginBottom = '8px';
+
+    const button = document.createElement('button');
+    button.textContent = 'Submit';
+    button.style.display = 'block';
+    button.style.marginBottom = '8px';
+
+    container.appendChild(input);
+    container.appendChild(button);
+
+    const injectDiv = document.createElement('div');
+    container.appendChild(injectDiv);
+    workspace = Blockly.inject(injectDiv, {});
+    inputSource = input;
+  }
+
   const suggestor = new BlockSuggestor(numBlocksPerCategory);
+  suggestor.workspace = workspace;
+  suggestor.inputSource = inputSource;
+
   workspace.registerToolboxCategoryCallback('MOST_USED', suggestor.getMostUsed);
   workspace.registerToolboxCategoryCallback(
     'RECENTLY_USED',
@@ -219,6 +258,7 @@ class BlockSuggestorSerializer {
     this.priority = Blockly.serialization.priorities.BLOCKS - 10;
   }
 
+  
   /**
    * Saves a target workspace's state to serialized JSON.
    * @param {Blockly.Workspace} workspace the workspace to save
