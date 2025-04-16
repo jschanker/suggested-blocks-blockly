@@ -96,6 +96,12 @@ export class BlockSuggestor {
   }
 }
 
+/**
+ * Main entry point to initialize the suggested blocks categories.
+ * @param {Blockly.WorkspaceSvg|string|Element} workspaceOrContainer The workspace or container to initialize.
+ * @param {number} [numBlocksPerCategory=10] The number of blocks per category to display.
+ * @param {boolean} [waitForFinishedLoading=true] Whether to wait for the workspace to finish loading before tracking events.
+ */
 export const init = function (
   workspaceOrContainer,
   numBlocksPerCategory = 10,
@@ -169,3 +175,4 @@ Blockly.serialization.registry.register(
   'suggested-blocks',
   new BlockSuggestorSerializer(),
 );
+
