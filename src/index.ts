@@ -3,12 +3,14 @@ import IMachineLearningModel from './IMachineLearningModel';
 
 const suggestorLookup = new WeakMap<Blockly.Workspace, BlockSuggestor>();
 
-
 export class BlockSuggestor {
   private description?: string;
   // Properties with explicit types
   private model: IMachineLearningModel | null = null;
-  private defaultJsonForBlockLookup: Record<string, Blockly.utils.toolbox.BlockInfo> = {};
+  private defaultJsonForBlockLookup: Record<
+    string,
+    Blockly.utils.toolbox.BlockInfo
+  > = {};
   private recentlyUsedBlocks: string[] = [];
   private workspaceHasFinishedLoading = false;
   private numBlocksPerCategory: number;
@@ -27,7 +29,7 @@ export class BlockSuggestor {
    * Sets the machine learning model to be used for block suggestions.
    *
    * @param model - The machine learning model to set
-   */ 
+   */
   setModel(model: IMachineLearningModel): void {
     this.model = model;
   }
@@ -36,7 +38,8 @@ export class BlockSuggestor {
    * Generates block suggestions based on the current description.
    */
   getSuggestedBlocks = (): Blockly.utils.toolbox.BlockInfo[] => {
-    const description = typeof this.description === 'string' ? this.description : '';
+    const description =
+      typeof this.description === 'string' ? this.description : '';
 
     const suggestedBlocks = this.model
       ? this.model.getSuggestedBlocks(description)
@@ -64,7 +67,7 @@ export class BlockSuggestor {
       (a, b) =>
         countMap.get(b) -
         countMap.get(a) +
-        0.01 * (recencyMap.get(a) - recencyMap.get(b))
+        0.01 * (recencyMap.get(a) - recencyMap.get(b)),
     );
 
     return this.generateBlockData(freqUsedBlockTypes);
@@ -94,29 +97,31 @@ export class BlockSuggestor {
    * @param blockTypeList - The list of block types to convert
    */
   generateBlockData = (
-    blockTypeList: [string]
-  ): Array<Blockly.utils.toolbox.BlockInfo | { kind: 'LABEL'; text: string }> => {
-    const blockList = blockTypeList.slice(0, this.numBlocksPerCategory).map((key) => {
-      const json = this.defaultJsonForBlockLookup[key] || {};
-      return {
-        ...json,
-        kind: 'BLOCK',
-        type: key,
-        x: undefined,
-        y: undefined,
-      };
-    });
-  
+    blockTypeList: [string],
+  ): Array<Blockly.utils.toolbox.BlockInfo | {kind: 'LABEL'; text: string}> => {
+    const blockList = blockTypeList
+      .slice(0, this.numBlocksPerCategory)
+      .map((key) => {
+        const json = this.defaultJsonForBlockLookup[key] || {};
+        return {
+          ...json,
+          kind: 'BLOCK',
+          type: key,
+          x: undefined,
+          y: undefined,
+        };
+      });
+
     if (blockList.length === 0) {
       blockList.push({
         kind: 'LABEL',
         text: 'No blocks have been used yet!',
-      });      
+      });
     }
-  
+
     return blockList;
   };
-  
+
   /**
    * Event listener for workspace events.
    *
@@ -131,43 +136,37 @@ export class BlockSuggestor {
     if (
       e.type === Blockly.Events.BLOCK_CREATE &&
       this.workspaceHasFinishedLoading &&
-      (e).json?.type
+      e.json?.type
     ) {
-      const newBlockType = (e).json.type;
-    
+      const newBlockType = e.json.type;
+
       if (!this.defaultJsonForBlockLookup[newBlockType]) {
         this.defaultJsonForBlockLookup[newBlockType] = (e as any).json;
       }
       this.recentlyUsedBlocks.unshift(newBlockType);
     }
-    
-    
-    
   }
-    saveToSerializedData(): object {
-      return {
-        recentlyUsedBlocks: this.recentlyUsedBlocks,
-        defaultJsonForBlockLookup: this.defaultJsonForBlockLookup,
-      };
-    }
-
-    loadFromSerializedData(state: any): void {
-      if (state.recentlyUsedBlocks) {
-        this.recentlyUsedBlocks = state.recentlyUsedBlocks;
-      }
-      if (state.defaultJsonForBlockLookup) {
-        this.defaultJsonForBlockLookup = state.defaultJsonForBlockLookup;
-      }
-    }
-
-    clearPriorBlockData(): void {
-      this.recentlyUsedBlocks = [];
-      this.defaultJsonForBlockLookup = {};
-    }
-    
-    
+  saveToSerializedData(): object {
+    return {
+      recentlyUsedBlocks: this.recentlyUsedBlocks,
+      defaultJsonForBlockLookup: this.defaultJsonForBlockLookup,
+    };
   }
 
+  loadFromSerializedData(state: any): void {
+    if (state.recentlyUsedBlocks) {
+      this.recentlyUsedBlocks = state.recentlyUsedBlocks;
+    }
+    if (state.defaultJsonForBlockLookup) {
+      this.defaultJsonForBlockLookup = state.defaultJsonForBlockLookup;
+    }
+  }
+
+  clearPriorBlockData(): void {
+    this.recentlyUsedBlocks = [];
+    this.defaultJsonForBlockLookup = {};
+  }
+}
 
 class BlockSuggestorSerializer implements Blockly.serialization.ISerializer {
   priority = Blockly.serialization.priorities.BLOCKS - 10;
@@ -194,5 +193,5 @@ class BlockSuggestorSerializer implements Blockly.serialization.ISerializer {
 
 Blockly.serialization.registry.register(
   'suggested-blocks',
-  new BlockSuggestorSerializer()
+  new BlockSuggestorSerializer(),
 );
