@@ -27,7 +27,7 @@ class NaiveBayesClassifier implements MachineLearningModel {
 
   private tokenBlockFrequencyMap: Map<string, number>;
 
-  constructor(options: {tokenizer?: Tokenizer}) {
+  constructor(options: { tokenizer?: Tokenizer }) {
     this.tokenizer = options.tokenizer || new SingleWordTokenizer();
     this.totalDescriptions = 0;
     this.tokenBlockFrequencyMap = new Map<string, number>();
@@ -41,7 +41,7 @@ class NaiveBayesClassifier implements MachineLearningModel {
     return JSON.parse(a);
   }
 
-  train(data: Array<{description: string; blocks: Blockly.Block[]}>): void {
+  train(data: Array<{ description: string; blocks: Blockly.Block[] }>): void {
     this.totalDescriptions += data.length;
     for (const dataPoint of data) {
       const uniqueTokens = new Set(
@@ -120,7 +120,7 @@ class NaiveBayesClassifier implements MachineLearningModel {
       const pTokens = numerator + pNotBlock * pTokensGivenNotBlock;
       const probability = numerator / pTokens;
 
-      blockTypeProbabilities.push({block: blockType, probability});
+      blockTypeProbabilities.push({ block: blockType, probability });
     }
     return blockTypeProbabilities.sort(
       (prob1, prob2) => prob2.probability - prob1.probability,
