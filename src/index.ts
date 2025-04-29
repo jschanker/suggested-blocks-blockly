@@ -102,7 +102,7 @@ export class BlockSuggestor {
    */
   generateBlockData = (
     blockTypeList: string[], 
-  ): Array<Blockly.utils.toolbox.BlockInfo> | Array<{kind: string; text: string}> => {
+  ): Blockly.utils.toolbox.BlockInfo[] | Array<{kind: string; text: string}> => {
     if (blockTypeList.length === 0) {
       return [{
         kind: 'label',
