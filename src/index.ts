@@ -46,8 +46,9 @@ export class BlockSuggestor {
       : [];
 
     const blockTypes = suggestedBlocks.map((block) => block.type);
-    return this.generateBlockData(blockTypes);
-  };
+    return blockTypes.flatMap(blockType => 
+    this.generateBlockData([blockType]) 
+    );}
 
   /**
    * Generates a list of the 10 most frequently used blocks.
@@ -70,8 +71,9 @@ export class BlockSuggestor {
         0.01 * (recencyMap.get(a) - recencyMap.get(b)),
     );
 
-    return this.generateBlockData(freqUsedBlockTypes);
-  };
+    return freqUsedBlockTypes.flatMap(blockType => 
+      this.generateBlockData([blockType])
+    );}
 
   /**
    * Generates a list of the 10 most recently used blocks.
@@ -88,8 +90,10 @@ export class BlockSuggestor {
 
     uniqueRecentBlocks.sort((a, b) => recencyMap.get(a) - recencyMap.get(b));
 
-    return this.generateBlockData(uniqueRecentBlocks);
-  };
+    return uniqueRecentBlocks.flatMap(blockType => 
+      this.generateBlockData([blockType])
+    );
+};
 
   /**
    * Converts block types to block data.
@@ -97,30 +101,29 @@ export class BlockSuggestor {
    * @param blockTypeList - The list of block types to convert
    */
   generateBlockData = (
-    blockTypeList: [string],
-  ): Array<Blockly.utils.toolbox.BlockInfo | {kind: 'LABEL'; text: string}> => {
-    const blockList = blockTypeList
+    blockTypeList: string[], 
+  ): Array<Blockly.utils.toolbox.BlockInfo> | Array<{kind: string; text: string}> => {
+    if (blockTypeList.length === 0) {
+      return [{
+        kind: 'label',
+        text: 'No blocks have been used yet!'
+      } as {kind: string; text: string}]; 
+    }
+    
+    return blockTypeList
       .slice(0, this.numBlocksPerCategory)
       .map((key) => {
         const json = this.defaultJsonForBlockLookup[key] || {};
         return {
           ...json,
-          kind: 'BLOCK',
+          kind: 'block',
           type: key,
           x: undefined,
           y: undefined,
-        };
+        } as Blockly.utils.toolbox.BlockInfo; 
       });
-
-    if (blockList.length === 0) {
-      blockList.push({
-        kind: 'LABEL',
-        text: 'No blocks have been used yet!',
-      });
-    }
-
-    return blockList;
   };
+  
 
   /**
    * Event listener for workspace events.
@@ -136,9 +139,9 @@ export class BlockSuggestor {
     if (
       e.type === Blockly.Events.BLOCK_CREATE &&
       this.workspaceHasFinishedLoading &&
-      e.json?.type
+      (e as any).json?.type
     ) {
-      const newBlockType = e.json.type;
+      const newBlockType = (e as any).json.type;
 
       if (!this.defaultJsonForBlockLookup[newBlockType]) {
         this.defaultJsonForBlockLookup[newBlockType] = (e as any).json;
