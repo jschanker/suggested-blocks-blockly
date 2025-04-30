@@ -46,9 +46,7 @@ export class BlockSuggestor {
       : [];
 
     const blockTypes = suggestedBlocks.map((block) => block.type);
-    return blockTypes.flatMap(blockType => 
-    this.generateBlockData([blockType]) 
-    );}
+    return this.generateBlockData(blockTypes);}
 
   /**
    * Generates a list of the 10 most frequently used blocks.
@@ -71,9 +69,8 @@ export class BlockSuggestor {
         0.01 * (recencyMap.get(a) - recencyMap.get(b)),
     );
 
-    return freqUsedBlockTypes.flatMap(blockType => 
-      this.generateBlockData([blockType])
-    );}
+    return this.generateBlockData(freqUsedBlockTypes);
+  }
 
   /**
    * Generates a list of the 10 most recently used blocks.
@@ -90,9 +87,7 @@ export class BlockSuggestor {
 
     uniqueRecentBlocks.sort((a, b) => recencyMap.get(a) - recencyMap.get(b));
 
-    return uniqueRecentBlocks.flatMap(blockType => 
-      this.generateBlockData([blockType])
-    );
+    return this.generateBlockData(uniqueRecentBlocks);
 };
 
   /**
@@ -102,12 +97,12 @@ export class BlockSuggestor {
    */
   generateBlockData = (
     blockTypeList: string[], 
-  ): Array<Blockly.utils.toolbox.BlockInfo> | Array<{kind: string; text: string}> => {
+  ): Blockly.utils.toolbox.BlockInfo[] | Array<{kind: string; text: string}> => {
     if (blockTypeList.length === 0) {
       return [{
         kind: 'label',
         text: 'No blocks have been used yet!'
-      } as {kind: string; text: string}]; 
+      }]; 
     }
     
     return blockTypeList
