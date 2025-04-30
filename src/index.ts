@@ -100,7 +100,7 @@ export class BlockSuggestor {
   ): Blockly.utils.toolbox.BlockInfo[] | Array<{kind: string; text: string}> => {
     if (blockTypeList.length === 0) {
       return [{
-        kind: 'label',
+        kind: 'LABEL',
         text: 'No blocks have been used yet!'
       }]; 
     }
@@ -111,11 +111,11 @@ export class BlockSuggestor {
         const json = this.defaultJsonForBlockLookup[key] || {};
         return {
           ...json,
-          kind: 'block',
+          kind: 'BLOCK',
           type: key,
           x: undefined,
           y: undefined,
-        } as Blockly.utils.toolbox.BlockInfo; 
+        }; 
       });
   };
   
