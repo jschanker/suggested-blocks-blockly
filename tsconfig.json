@@ -1,17 +1,17 @@
 {
-    "compilerOptions": {
-      "outDir": "./dist/",
-      "sourceMap": true,
-      "strict": false,
-      "module": "es6",
-      "moduleResolution": "node",
-      "target": "es2015",
-      "downlevelIteration": true,
-      "allowJs": true,
-      "jsx": "react",
-      "esModuleInterop": true,
-      "lib": ["dom", "es2015"],
-      "strictNullChecks": false
-    },
-    "include": ["./src/**/*"]
-  }
+  "compilerOptions": {
+    "outDir": "./dist/",
+    "sourceMap": true,
+    "strict": false,
+    "module": "es6",
+    "moduleResolution": "node",
+    "target": "es2015",
+    "downlevelIteration": true,
+    "allowJs": true,
+    "jsx": "react",
+    "esModuleInterop": true,
+    "lib": ["dom", "es2015"],
+    "strictNullChecks": false
+  },
+  "include": ["./src/**/*"]
+}
