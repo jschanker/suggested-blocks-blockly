@@ -4,6 +4,9 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+/**
+ * @fileoverview Utility functions for handling suggestions.
+ */
 import * as Blockly from 'blockly/core';
 import IMachineLearningModel from './IMachineLearningModel';
 
@@ -15,12 +18,7 @@ const suggestorLookup = new WeakMap<Blockly.Workspace, BlockSuggestor>();
  * blocks to use.
  */
 export class BlockSuggestor {
-    /**
-   * Constructs a BlockSuggestor object.
-   * @param {number} numBlocksPerCategory the size of each toolbox category
-   */
   private description?: string;
-  // Properties with explicit types
   private model: IMachineLearningModel | null = null;
     /**
      * Saves the full JSON data for each block type the first time it's used.
@@ -31,27 +29,28 @@ export class BlockSuggestor {
     string,
     Blockly.utils.toolbox.BlockInfo
   > = {};
-      /**
+    /**
      * List of reently used block types
      */
   private recentlyUsedBlocks: string[] = [];
-      /**
+    /**
      * Checks if the workspace is finished loading, to avoid taking action on
      * all the BLOCK_CREATE events during workspace loading.
      */
-  private workspaceHasFinishedLoading = false;
+  /* eslint-disable-next-line @typescript-eslint/explicit-member-accessibility */
+  public workspaceHasFinishedLoading = false;
+
 
     /**
-     * Setter for workspaceHasFinishedLoading.
-     */
-  public setWorkspaceHasFinishedLoading(value: boolean): void {
-    this.workspaceHasFinishedLoading = value;
-  }
-      /**
      * Config parameter which sets the size of the toolbox categories.
      */
   private numBlocksPerCategory: number;
 
+  /**
+   * Constructs a BlockSuggestor object.
+   * 
+   * @param numBlocksPerCategory the size of each toolbox category
+   */
   constructor(numBlocksPerCategory: number) {
     /**
      * Config parameter which sets the size of the toolbox categories.
@@ -90,9 +89,10 @@ export class BlockSuggestor {
   };
 
   /**
-     * Generates a list of the 10 most frequently used blocks, in order.
+   * Generates a list of the 10 most frequently used blocks, in order.
    * Includes a secondary sort by most recent blocks.
-   * @returns {!Array<!Blockly.utils.toolbox.BlockInfo>}A list of block JSON
+   * 
+   * @returns A list of block JSON
    */
   getMostUsed = (): Blockly.utils.toolbox.BlockInfo[] => {
     // Store the frequency of each block, as well as the index first appears at.
@@ -117,9 +117,10 @@ export class BlockSuggestor {
     return this.generateBlockData(freqUsedBlockTypes);
   };
 
-    /**
+  /**
    * Generates a list of the 10 most recently used blocks.
-   * @returns {Array <object>} A list of block JSON objects
+   * 
+   * @returns A list of block JSON objects
    */
   getRecentlyUsed = (): Blockly.utils.toolbox.BlockInfo[] => {
     const uniqueRecentBlocks = Array.from(new Set(this.recentlyUsedBlocks));
@@ -138,8 +139,9 @@ export class BlockSuggestor {
 
   /**
    * Converts a list of block types to a full-fledge list of block data.
-   * @param {Array<string>} blockTypeList the list of block types
-   * @returns {Array<JSON>} the block data list
+   * 
+   * @param blockTypeList the list of block types
+   * @returns the block data list
    */
   generateBlockData = (
     blockTypeList: string[],
@@ -188,14 +190,16 @@ export class BlockSuggestor {
        // If this is the first time creating this block, store its default
       // configuration so we know how exactly to render it in the toolbox.
       if (!this.defaultJsonForBlockLookup[newBlockType]) {
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         this.defaultJsonForBlockLookup[newBlockType] = (e as any).json;
       }
       this.recentlyUsedBlocks.unshift(newBlockType);
     }
   }
-    /**
+  /**
    * Saves the state of this object to a serialized JSON.
-   * @returns {object} a serialized data object including this object's state
+   * 
+   * @returns a serialized data object including this object's state
    */
   saveToSerializedData(): object {
     return {
@@ -204,10 +208,12 @@ export class BlockSuggestor {
     };
   }
 
-    /**
+  /**
    * Loads the state of this object from a serialized JSON.
-   * @param {object} data the serialized data payload to load from
+   * 
+   * @param state the serialized data payload to load from
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   loadFromSerializedData(state: any): void {
     if (state.recentlyUsedBlocks) {
       this.recentlyUsedBlocks = state.recentlyUsedBlocks;
@@ -217,7 +223,7 @@ export class BlockSuggestor {
     }
   }
 
-    /**
+  /**
    * Resets the internal state of this object.
    */
   clearPriorBlockData(): void {
@@ -228,6 +234,7 @@ export class BlockSuggestor {
 
 /**
  * Main entry point to initialize the suggested blocks categories.
+ * 
  * @param workspace the workspace to load into
  * @param numBlocksPerCategory how many blocks should be included per
  * category. Defaults to 10.
@@ -237,8 +244,8 @@ export class BlockSuggestor {
  */
 export const init = function (
   workspace: Blockly.WorkspaceSvg,
-  numBlocksPerCategory: number = 10,
-  waitForFinishedLoading: boolean = true,
+  numBlocksPerCategory: 10,
+  waitForFinishedLoading: true,
 ): void {
   const suggestor = new BlockSuggestor(numBlocksPerCategory);
   workspace.registerToolboxCategoryCallback(
@@ -252,7 +259,7 @@ export const init = function (
   );
   // If user says not to wait to hear FINISHED_LOADING event,
   // then always respond to BLOCK_CREATE events.
-  if (!waitForFinishedLoading) suggestor.setWorkspaceHasFinishedLoading(true);
+  if (!waitForFinishedLoading) suggestor.workspaceHasFinishedLoading = true;
   workspace.addChangeListener(suggestor.eventListener);
   suggestorLookup.set(workspace, suggestor);
   };
@@ -263,27 +270,30 @@ export const init = function (
  */
 class BlockSuggestorSerializer implements Blockly.serialization.ISerializer {
    /**
-     * The priority for deserializing block suggestion data.
-     * Should be less than the priority for blocks so that this state is
-     * applied after the blocks are loaded.
-     * @type {number}
-     */
+    * The priority for deserializing block suggestion data.
+    * Should be less than the priority for blocks so that this state is
+    * applied after the blocks are loaded.
+    * 
+    * @type {number}
+    */
   priority = Blockly.serialization.priorities.BLOCKS - 10;
 
-    /**
+  /**
    * Saves a target workspace's state to serialized JSON.
-   * @param {Blockly.Workspace} workspace the workspace to save
-   * @returns {object|undefined} the serialized JSON if present
+   * 
+   * @param workspace the workspace to save
+   * @returns the serialized JSON if present
    */
   save(workspace: Blockly.Workspace): object | null {
     const suggestor = suggestorLookup.get(workspace);
     return suggestor ? suggestor.saveToSerializedData() : null;
   }
 
-    /**
+  /**
    * Loads a serialized state into the target workspace.
-   * @param {object} state the serialized state JSON
-   * @param {Blockly.Workspace} workspace the workspace to load into
+   * 
+   * @param state the serialized state JSON
+   * @param workspace the workspace to load into
    */
   load(state: object, workspace: Blockly.Workspace): void {
     const suggestor = suggestorLookup.get(workspace);
@@ -292,9 +302,10 @@ class BlockSuggestorSerializer implements Blockly.serialization.ISerializer {
     }
   }
 
-    /**
+  /**
    * Resets the state of a workspace.
-   * @param {Blockly.Workspace} workspace the workspace to reset
+   * 
+   * @param workspace the workspace to reset
    */
   clear(workspace: Blockly.Workspace): void {
     const suggestor = suggestorLookup.get(workspace);
