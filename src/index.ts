@@ -61,8 +61,6 @@ export class BlockSuggestor {
      * Config parameter which sets the size of the toolbox categories.
      */
     this.numBlocksPerCategory = numBlocksPerCategory;
-
-    // Bind methods to `this`
     this.eventListener = this.eventListener.bind(this);
     this.getMostUsed = this.getMostUsed.bind(this);
     this.getRecentlyUsed = this.getRecentlyUsed.bind(this);
@@ -128,7 +126,7 @@ export class BlockSuggestor {
    * @returns A list of block JSON objects
    */
   getRecentlyUsed = (): Blockly.utils.toolbox.BlockInfo[] => {
-    const uniqueRecentBlocks = Array.from(new Set(this.recentlyUsedBlocks));
+    const uniqueRecentBlocks = [...new Set(this.recentlyUsedBlocks)];
     const recencyMap = new Map<string, number>();
 
     this.recentlyUsedBlocks.forEach((key, index) => {
@@ -195,30 +193,18 @@ export class BlockSuggestor {
       // If this is the first time creating this block, store its default
       // configuration so we know how exactly to render it in the toolbox.
       if (!this.defaultJsonForBlockLookup[newBlockType]) {
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        this.defaultJsonForBlockLookup[newBlockType] = (e as any).json;
+        this.defaultJsonForBlockLookup[newBlockType] = (e as Blockly.Events.BlockCreate).json;
       }
       this.recentlyUsedBlocks.unshift(newBlockType);
     }
-  }
-  /**
-   * Saves the state of this object to a serialized JSON.
-   *
-   * @returns a serialized data object including this object's state
-   */
-  saveToSerializedData(): object {
-    return {
-      recentlyUsedBlocks: this.recentlyUsedBlocks,
-      defaultJsonForBlockLookup: this.defaultJsonForBlockLookup,
-    };
   }
 
   /**
    * Loads the state of this object from a serialized JSON.
    *
-   * @param state the serialized data payload to load from
+   * @param data the serialized data payload to load from
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
   loadFromSerializedData(state: any): void {
     if (state.recentlyUsedBlocks) {
       this.recentlyUsedBlocks = state.recentlyUsedBlocks;
@@ -228,12 +214,24 @@ export class BlockSuggestor {
     }
   }
 
+    /**
+   * Saves the state of this object to a serialized JSON.
+   *
+   * @returns a serialized data object including this object's state
+   */
+  saveToSerializedData(): object {
+    return {
+      defaultJsonForBlockLookup: this.defaultJsonForBlockLookup,
+      recentlyUsedBlocks: this.recentlyUsedBlocks,
+    };
+  }
+
   /**
    * Resets the internal state of this object.
    */
   clearPriorBlockData(): void {
-    this.recentlyUsedBlocks = [];
     this.defaultJsonForBlockLookup = {};
+    this.recentlyUsedBlocks = [];
   }
 }
 
@@ -249,8 +247,8 @@ export class BlockSuggestor {
  */
 export const init = function (
   workspace: Blockly.WorkspaceSvg,
-  numBlocksPerCategory: 10,
-  waitForFinishedLoading: true,
+  numBlocksPerCategory = 10,
+  waitForFinishedLoading = true,
 ): void {
   const suggestor = new BlockSuggestor(numBlocksPerCategory);
   workspace.registerToolboxCategoryCallback(
@@ -289,9 +287,8 @@ class BlockSuggestorSerializer implements Blockly.serialization.ISerializer {
    * @param workspace the workspace to save
    * @returns the serialized JSON if present
    */
-  save(workspace: Blockly.Workspace): object | null {
-    const suggestor = suggestorLookup.get(workspace);
-    return suggestor ? suggestor.saveToSerializedData() : null;
+  save(workspace: Blockly.Workspace): object | undefined {
+  return suggestorLookup.get(workspace)?.saveToSerializedData();
   }
 
   /**
@@ -300,23 +297,17 @@ class BlockSuggestorSerializer implements Blockly.serialization.ISerializer {
    * @param state the serialized state JSON
    * @param workspace the workspace to load into
    */
-  load(state: object, workspace: Blockly.Workspace): void {
-    const suggestor = suggestorLookup.get(workspace);
-    if (suggestor) {
-      suggestor.loadFromSerializedData(state);
+  load(state, workspace) {
+    suggestorLookup.get(workspace)?.loadFromSerializedData(state);
     }
-  }
 
   /**
    * Resets the state of a workspace.
    *
    * @param workspace the workspace to reset
    */
-  clear(workspace: Blockly.Workspace): void {
-    const suggestor = suggestorLookup.get(workspace);
-    if (suggestor) {
-      suggestor.clearPriorBlockData();
-    }
+  clear(workspace) {
+    suggestorLookup.get(workspace)?.clearPriorBlockData();
   }
 }
 
