@@ -194,8 +194,8 @@ export class BlockSuggestor {
       // configuration so we know how exactly to render it in the toolbox.
       if (!this.defaultJsonForBlockLookup[newBlockType]) {
         this.defaultJsonForBlockLookup[newBlockType] = (
-           (e as Blockly.Events.BlockCreate).json as Blockly.utils.toolbox.BlockInfo
-        ); 
+          e as Blockly.Events.BlockCreate
+        ).json as Blockly.utils.toolbox.BlockInfo;
       }
       this.recentlyUsedBlocks.unshift(newBlockType);
     }
