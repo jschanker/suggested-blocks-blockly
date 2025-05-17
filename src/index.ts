@@ -194,8 +194,8 @@ export class BlockSuggestor {
       // configuration so we know how exactly to render it in the toolbox.
       if (!this.defaultJsonForBlockLookup[newBlockType]) {
         this.defaultJsonForBlockLookup[newBlockType] = (
-          e as Blockly.Events.BlockCreate
-        ).json;
+           (e as Blockly.Events.BlockCreate).json as Blockly.utils.toolbox.BlockInfo
+        ); 
       }
       this.recentlyUsedBlocks.unshift(newBlockType);
     }
@@ -204,7 +204,7 @@ export class BlockSuggestor {
   /**
    * Loads the state of this object from a serialized JSON.
    *
-   * @param data the serialized data payload to load from
+   * @param state the serialized data payload to load from
    */
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   loadFromSerializedData(state: any): void {
