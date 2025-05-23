@@ -54,10 +54,12 @@ export class BlockSuggestor {
   /**
    * New workspace
    */
+  // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   public workspace: Blockly.WorkspaceSvg | null = null;
   /**
    * Optional input description element or string
    */
+  // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   public inputSource: HTMLInputElement | null = null;
   /**
    * Constructs a BlockSuggestor object.
@@ -86,20 +88,20 @@ export class BlockSuggestor {
    * Generates block suggestions based on the current description.
    */
   getSuggestedBlocks = (): Blockly.utils.toolbox.BlockInfo[] => {
-    let description = ''; 
+    let description = '';
 
     if (typeof this.description === 'string') {
-       description = this.description;
-    } else if (this.inputSource instanceof HTMLInputElement) { 
+      description = this.description;
+    } else if (this.inputSource instanceof HTMLInputElement) {
       description = this.inputSource.value || '';
-     }
-     
-    const suggestedBlocks = this.model
-     ? this.model.getSuggestedBlocks(description)
-     : [];
+    }
 
-     const blockTypes = suggestedBlocks.map((block) => block.type);
-     return this.generateBlockData(blockTypes);
+    const suggestedBlocks = this.model
+      ? this.model.getSuggestedBlocks(description)
+      : [];
+
+    const blockTypes = suggestedBlocks.map((block) => block.type);
+    return this.generateBlockData(blockTypes);
   };
 
   /**
