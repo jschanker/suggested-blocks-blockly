@@ -52,15 +52,21 @@ export class BlockSuggestor {
   private numBlocksPerCategory: number;
 
   /**
+   * New workspace
+   */
+  public workspace: Blockly.WorkspaceSvg | null = null;
+  /**
+   * Optional input description element or string
+   */
+  public inputSource: HTMLInputElement | null = null;
+  /**
    * Constructs a BlockSuggestor object.
    *
    * @param numBlocksPerCategory the size of each toolbox category
    */
   constructor(numBlocksPerCategory: number) {
-    /**
-     * Config parameter which sets the size of the toolbox categories.
-     */
     this.numBlocksPerCategory = numBlocksPerCategory;
+
     this.eventListener = this.eventListener.bind(this);
     this.getMostUsed = this.getMostUsed.bind(this);
     this.getRecentlyUsed = this.getRecentlyUsed.bind(this);
@@ -80,15 +86,20 @@ export class BlockSuggestor {
    * Generates block suggestions based on the current description.
    */
   getSuggestedBlocks = (): Blockly.utils.toolbox.BlockInfo[] => {
-    const description =
-      typeof this.description === 'string' ? this.description : '';
+    let description = ''; 
 
+    if (typeof this.description === 'string') {
+       description = this.description;
+    } else if (this.inputSource instanceof HTMLInputElement) { 
+      description = this.inputSource.value || '';
+     }
+     
     const suggestedBlocks = this.model
-      ? this.model.getSuggestedBlocks(description)
-      : [];
+     ? this.model.getSuggestedBlocks(description)
+     : [];
 
-    const blockTypes = suggestedBlocks.map((block) => block.type);
-    return this.generateBlockData(blockTypes);
+     const blockTypes = suggestedBlocks.map((block) => block.type);
+     return this.generateBlockData(blockTypes);
   };
 
   /**
@@ -240,7 +251,7 @@ export class BlockSuggestor {
 /**
  * Main entry point to initialize the suggested blocks categories.
  *
- * @param workspace the workspace to load into
+ * @param workspaceOrContainer The workspace to load into, or the container to inject into.
  * @param numBlocksPerCategory how many blocks should be included per
  * category. Defaults to 10.
  * @param waitForFinishedLoading whether to wait until we hear the
@@ -248,11 +259,48 @@ export class BlockSuggestor {
  * if you disable events during initial load. Defaults to true.
  */
 export const init = function (
-  workspace: Blockly.WorkspaceSvg,
+  workspaceOrContainer: string | Element | Blockly.WorkspaceSvg,
   numBlocksPerCategory = 10,
   waitForFinishedLoading = true,
 ): void {
+  let workspace: Blockly.WorkspaceSvg;
+  let inputSource: HTMLInputElement | null = null;
+
+  if (workspaceOrContainer instanceof Blockly.WorkspaceSvg) {
+    workspace = workspaceOrContainer;
+  } else {
+    let container: HTMLElement | null = null;
+    if (typeof workspaceOrContainer === 'string') {
+      container = document.getElementById(workspaceOrContainer);
+    } else if (workspaceOrContainer instanceof Element) {
+      container = workspaceOrContainer as HTMLElement;
+    }
+    if (!container) throw new Error('Invalid workspace container');
+
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.placeholder = 'Describe your problem...';
+    input.style.display = 'block';
+    input.style.marginBottom = '8px';
+    container.appendChild(input);
+    inputSource = input;
+
+    const button = document.createElement('button');
+    button.textContent = 'Submit';
+    button.style.display = 'block';
+    button.style.marginBottom = '8px';
+    container.appendChild(button);
+
+    const injectDiv = document.createElement('div');
+    container.appendChild(injectDiv);
+    workspace = Blockly.inject(injectDiv, {}) as Blockly.WorkspaceSvg;
+  }
+
   const suggestor = new BlockSuggestor(numBlocksPerCategory);
+
+  suggestor.workspace = workspace;
+  suggestor.inputSource = inputSource;
+
   workspace.registerToolboxCategoryCallback(
     'AI_SUGGESTED',
     suggestor.getSuggestedBlocks,
