@@ -19,6 +19,7 @@ import * as SuggestedBlocks from '../src/index';
  * @returns {!Blockly.WorkspaceSvg} The created workspace.
  */
 function createWorkspace(blocklyDiv, options) {
+  //return SuggestedBlocks.init(blocklyDiv, options)
   const workspace = Blockly.inject(blocklyDiv, options);
   SuggestedBlocks.init(workspace);
   return workspace;
@@ -31,6 +32,7 @@ const customTheme = Blockly.Theme.defineTheme('classic_with_suggestions', {
   categoryStyles: {
     frequently_used_category: {colour: '60'},
     recently_used_category: {colour: '60'},
+    ai_suggestion_category:{colour: '60'}
   },
   componentStyles: {},
   fontStyle: {},
@@ -50,6 +52,12 @@ document.addEventListener('DOMContentLoaded', async function () {
     name: 'Recently Used',
     custom: 'RECENTLY_USED',
     categorystyle: 'recently_used_category',
+  });
+  toolboxCategories['contents'].push({
+    kind: 'category',
+    name: 'AI suggested',
+    custom: 'AI_SUGGESTED',
+    categorystyle: 'ai_suggestion_category',
   });
   const defaultOptions = {
     toolbox: toolboxCategories,

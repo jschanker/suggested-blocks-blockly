@@ -46,27 +46,11 @@ export class BlockSuggestor {
   /* eslint-disable-next-line @typescript-eslint/explicit-member-accessibility */
   public workspaceHasFinishedLoading = false;
 
-  /**
-   * Config parameter which sets the size of the toolbox categories.
-   */
-  private numBlocksPerCategory: number;
-
-  /**
-   * New workspace
-   */
-  // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
-  public workspace: Blockly.WorkspaceSvg | null = null;
-  /**
-   * Optional input description element or string
-   */
-  // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
-  public inputSource: HTMLInputElement | null = null;
-  /**
-   * Constructs a BlockSuggestor object.
-   *
-   * @param numBlocksPerCategory the size of each toolbox category
-   */
-  constructor(numBlocksPerCategory: number) {
+  constructor(
+    private numBlocksPerCategory: number,
+    public workspace: Blockly.WorkspaceSvg | null,
+    public inputSource: HTMLInputElement | null,
+  ) {
     this.numBlocksPerCategory = numBlocksPerCategory;
 
     this.eventListener = this.eventListener.bind(this);
@@ -267,11 +251,11 @@ export const init = function (
 ): void {
   let workspace: Blockly.WorkspaceSvg;
   let inputSource: HTMLInputElement | null = null;
+  let container: HTMLElement | null = null;
 
   if (workspaceOrContainer instanceof Blockly.WorkspaceSvg) {
     workspace = workspaceOrContainer;
   } else {
-    let container: HTMLElement | null = null;
     if (typeof workspaceOrContainer === 'string') {
       container = document.getElementById(workspaceOrContainer);
     } else if (workspaceOrContainer instanceof Element) {
@@ -288,20 +272,40 @@ export const init = function (
     inputSource = input;
 
     const button = document.createElement('button');
-    button.textContent = 'Submit';
+    button.textContent = 'Get Suggested Blocks';
     button.style.display = 'block';
     button.style.marginBottom = '8px';
     container.appendChild(button);
+
+    button.addEventListener('click', () => {
+      const inputValue = input.value;
+      if (inputValue) {
+        if (suggestor.workspace) {
+          const flyout = suggestor.workspace.getFlyout();
+          if (flyout && flyout.show) {
+            flyout.show('AI_SUGGESTED');
+          } else {
+            console.error(
+              'Flyout or show method not available on workspaceSvg.',
+            );
+          }
+        } else {
+          console.error('Workspace not available on suggestor.');
+        }
+      } else {
+        alert('Please enter a problem to get suggestions.');
+      }
+    });
 
     const injectDiv = document.createElement('div');
     container.appendChild(injectDiv);
     workspace = Blockly.inject(injectDiv, {}) as Blockly.WorkspaceSvg;
   }
-
-  const suggestor = new BlockSuggestor(numBlocksPerCategory);
-
-  suggestor.workspace = workspace;
-  suggestor.inputSource = inputSource;
+  const suggestor = new BlockSuggestor(
+    numBlocksPerCategory,
+    workspace,
+    inputSource,
+  );
 
   workspace.registerToolboxCategoryCallback(
     'AI_SUGGESTED',
