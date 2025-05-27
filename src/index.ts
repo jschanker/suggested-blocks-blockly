@@ -46,10 +46,32 @@ export class BlockSuggestor {
   /* eslint-disable-next-line @typescript-eslint/explicit-member-accessibility */
   public workspaceHasFinishedLoading = false;
 
+  /**
+   * Config parameter which sets the size of the toolbox categories.
+   */
+  private numBlocksPerCategory: number;
+
+  /**
+   * New workspace
+   */
+  // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
+  public workspace: Blockly.WorkspaceSvg | null = null;
+  /**
+   * Optional input description element or string
+   */
+  // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
+  public inputSource: HTMLInputElement | null = null;
+  /**
+   * Constructs a BlockSuggestor object.
+   *
+   * @param numBlocksPerCategory the size of each toolbox category
+   * @param workspace new workspace
+   * @param inputSource optional input description element or string
+   */
   constructor(
-    private numBlocksPerCategory: number,
-    public workspace: Blockly.WorkspaceSvg | null,
-    public inputSource: HTMLInputElement | null,
+    numBlocksPerCategory: number,
+    workspace: Blockly.WorkspaceSvg | null = null,
+    inputSource: HTMLInputElement | null = null,
   ) {
     this.numBlocksPerCategory = numBlocksPerCategory;
 
