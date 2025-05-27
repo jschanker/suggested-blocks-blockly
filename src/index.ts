@@ -201,24 +201,27 @@ export class BlockSuggestor {
   /**
    * Loads the state of this object from a serialized JSON.
    *
-   * @param state the serialized data payload to load from
+   * @param data the serialized data payload to load from
+   * @param data.defaultJsonForBlockLookup the lookup table for default block JSON
+   * @param data.recentlyUsedBlocks the list of recently used block types
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  loadFromSerializedData(state: any): void {
-    if (state.recentlyUsedBlocks) {
-      this.recentlyUsedBlocks = state.recentlyUsedBlocks;
-    }
-    if (state.defaultJsonForBlockLookup) {
-      this.defaultJsonForBlockLookup = state.defaultJsonForBlockLookup;
-    }
+  loadFromSerializedData(data: {
+    defaultJsonForBlockLookup: Record<string, Blockly.utils.toolbox.BlockInfo>;
+    recentlyUsedBlocks: string[];
+  }): void {
+    this.defaultJsonForBlockLookup = data.defaultJsonForBlockLookup;
+    this.recentlyUsedBlocks = data.recentlyUsedBlocks;
   }
 
   /**
    * Saves the state of this object to a serialized JSON.
    *
-   * @returns a serialized data object including this object's state
+   * @returns a serialized data object including this object's state, an object with defaultJsonForBlockLookup and recentlyUsedBlocks
    */
-  saveToSerializedData(): object {
+  saveToSerializedData(): {
+    defaultJsonForBlockLookup: Record<string, Blockly.utils.toolbox.BlockInfo>;
+    recentlyUsedBlocks: string[];
+  } {
     return {
       defaultJsonForBlockLookup: this.defaultJsonForBlockLookup,
       recentlyUsedBlocks: this.recentlyUsedBlocks,
@@ -350,11 +353,11 @@ class BlockSuggestorSerializer implements Blockly.serialization.ISerializer {
   /**
    * Loads a serialized state into the target workspace.
    *
-   * @param state the serialized state JSON
+   * @param data the serialized state JSON
    * @param workspace the workspace to load into
    */
-  load(state, workspace) {
-    suggestorLookup.get(workspace)?.loadFromSerializedData(state);
+  load(data, workspace) {
+    suggestorLookup.get(workspace)?.loadFromSerializedData(data);
   }
 
   /**
