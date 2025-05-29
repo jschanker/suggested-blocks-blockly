@@ -52,7 +52,7 @@ export class BlockSuggestor {
   private numBlocksPerCategory: number;
 
   /**
-   * New workspace
+   * Creates the inital empty workspace
    */
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   public workspace: Blockly.WorkspaceSvg | null = null;
@@ -192,35 +192,6 @@ export class BlockSuggestor {
   };
 
   /**
-   * Event listener for workspace events.
-   *
-   * @param e - The event object for workspace events
-   */
-  eventListener(e: Blockly.Events.Abstract): void {
-    if (e.type === Blockly.Events.FINISHED_LOADING) {
-      this.workspaceHasFinishedLoading = true;
-      return;
-    }
-
-    if (
-      e.type === Blockly.Events.BLOCK_CREATE &&
-      this.workspaceHasFinishedLoading &&
-      (e as Blockly.Events.BlockCreate).json?.type
-    ) {
-      const newBlockType = (e as Blockly.Events.BlockCreate).json.type;
-
-      // If this is the first time creating this block, store its default
-      // configuration so we know how exactly to render it in the toolbox.
-      if (!this.defaultJsonForBlockLookup[newBlockType]) {
-        this.defaultJsonForBlockLookup[newBlockType] = (
-          e as Blockly.Events.BlockCreate
-        ).json as Blockly.utils.toolbox.BlockInfo;
-      }
-      this.recentlyUsedBlocks.unshift(newBlockType);
-    }
-  }
-
-  /**
    * Loads the state of this object from a serialized JSON.
    *
    * @param data the serialized data payload to load from
@@ -257,8 +228,36 @@ export class BlockSuggestor {
     this.defaultJsonForBlockLookup = {};
     this.recentlyUsedBlocks = [];
   }
-}
 
+  /**
+   * Callback for when the workspace sends out events.
+   *
+   * @param e - The event object for workspace events
+   */
+  eventListener(e: Blockly.Events.Abstract): void {
+    if (e.type === Blockly.Events.FINISHED_LOADING) {
+      this.workspaceHasFinishedLoading = true;
+      return;
+    }
+
+    if (
+      e.type === Blockly.Events.BLOCK_CREATE &&
+      this.workspaceHasFinishedLoading &&
+      (e as Blockly.Events.BlockCreate).json?.type
+    ) {
+      const newBlockType = (e as Blockly.Events.BlockCreate).json.type;
+
+      // If this is the first time creating this block, store its default
+      // configuration so we know how exactly to render it in the toolbox.
+      if (!this.defaultJsonForBlockLookup[newBlockType]) {
+        this.defaultJsonForBlockLookup[newBlockType] = (
+          e as Blockly.Events.BlockCreate
+        ).json as Blockly.utils.toolbox.BlockInfo;
+      }
+      this.recentlyUsedBlocks.unshift(newBlockType);
+    }
+  }
+}
 /**
  * Main entry point to initialize the suggested blocks categories.
  *
@@ -273,7 +272,7 @@ export const init = function (
   workspaceOrContainer: string | Element | Blockly.WorkspaceSvg,
   numBlocksPerCategory = 10,
   waitForFinishedLoading = true,
-): void {
+) {
   let workspace: Blockly.WorkspaceSvg;
   let inputSource: HTMLInputElement | null = null;
   let container: HTMLElement | null = null;
@@ -346,6 +345,7 @@ export const init = function (
   if (!waitForFinishedLoading) suggestor.workspaceHasFinishedLoading = true;
   workspace.addChangeListener(suggestor.eventListener);
   suggestorLookup.set(workspace, suggestor);
+  return workspace;
 };
 
 /**
@@ -375,7 +375,7 @@ class BlockSuggestorSerializer implements Blockly.serialization.ISerializer {
   /**
    * Loads a serialized state into the target workspace.
    *
-   * @param data the serialized state JSON
+   * @param state the serialized state JSON
    * @param workspace the workspace to load into
    */
   load(data, workspace) {
