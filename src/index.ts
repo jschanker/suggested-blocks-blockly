@@ -52,7 +52,7 @@ export class BlockSuggestor {
   private numBlocksPerCategory: number;
 
   /**
-   * Creates the inital empty workspace
+   * The Blockly workspace instance associated with this BlockSuggestor.
    */
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
   public workspace: Blockly.WorkspaceSvg | null = null;
@@ -272,7 +272,7 @@ export const init = function (
   workspaceOrContainer: string | Element | Blockly.WorkspaceSvg,
   numBlocksPerCategory = 10,
   waitForFinishedLoading = true,
-) {
+): Blockly.WorkspaceSvg {
   let workspace: Blockly.WorkspaceSvg;
   let inputSource: HTMLInputElement | null = null;
   let container: HTMLElement | null = null;
@@ -375,7 +375,7 @@ class BlockSuggestorSerializer implements Blockly.serialization.ISerializer {
   /**
    * Loads a serialized state into the target workspace.
    *
-   * @param state the serialized state JSON
+   * @param data the serialized state JSON
    * @param workspace the workspace to load into
    */
   load(data, workspace) {
