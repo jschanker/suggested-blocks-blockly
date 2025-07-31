@@ -103,7 +103,7 @@ export class BlockSuggestor {
     }
 
     const suggestedBlocks = this.model
-      ? this.model.getSuggestedBlocks(description)
+      ? this.model.getSuggestedBlocks(description, this.workspace)
       : [];
 
     const blockTypes = suggestedBlocks.map((block) => block.type);
