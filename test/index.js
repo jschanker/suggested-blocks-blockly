@@ -11,6 +11,8 @@
 import * as Blockly from 'blockly';
 import {toolboxCategories, createPlayground} from '@blockly/dev-tools';
 import * as SuggestedBlocks from '../src/index';
+import trainingData from './training_data_kd.json';
+import NaiveBayesClassifier from '../src/NaiveBayesClassifier';
 
 /**
  * Create a workspace.
@@ -37,6 +39,33 @@ const customTheme = Blockly.Theme.defineTheme('classic_with_suggestions', {
   fontStyle: {},
   startHats: null,
 });
+
+/**
+ * Creates Blockly block instances from JSON block definitions by making a temporary workspace.
+ * @param {Array} blockJsonArray - Array of JSON objects representing block definitions.
+ * @returns {Array} Array of Blockly block instances.
+ */
+function createBlocksFromJson(blockJsonArray) {
+  const tempDiv = document.createElement('div');
+  const tempWorkspace = Blockly.inject(tempDiv, {toolbox: toolboxCategories});
+
+  const workspaceData = {blocks: {blocks: blockJsonArray}};
+  Blockly.serialization.workspaces.load(workspaceData, tempWorkspace);
+
+  const blocks = tempWorkspace.getAllBlocks();
+  tempWorkspace.dispose();
+  tempDiv.remove();
+  return blocks;
+}
+
+const transformedData = trainingData.map((item) => ({
+  description: item.description,
+  blocks: createBlocksFromJson(item.blocks.blocks),
+}));
+
+const NaiveBayes = new NaiveBayesClassifier({});
+NaiveBayes.train(transformedData);
+console.log('Training completed with', transformedData.length, 'examples');
 
 document.addEventListener('DOMContentLoaded', async function () {
   // Insert two new categories
@@ -67,6 +96,18 @@ document.addEventListener('DOMContentLoaded', async function () {
     createWorkspace,
     defaultOptions,
   );
+
+  const testWorkspace = playground.getWorkspace();
+  const testDescription = 'print text';
+  const suggestions = NaiveBayes.getSuggestedBlocks(
+    testDescription,
+    testWorkspace,
+  );
+  console.log(
+    'Suggested blocks:',
+    suggestions.map((block) => block.type),
+  );
+
   // Fire a FINISHED_LOADING event again after the playground loads.
   // This may be fired if there is saved JSON in the advanced playground.
   // But we need it to fire even if there's no saved JSON and therefore deserialization was never called.
