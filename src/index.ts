@@ -76,6 +76,7 @@ export class BlockSuggestor {
     this.numBlocksPerCategory = numBlocksPerCategory;
 
     this.eventListener = this.eventListener.bind(this);
+    this.getSuggestedBlocks = this.getSuggestedBlocks.bind(this);
     this.getMostUsed = this.getMostUsed.bind(this);
     this.getRecentlyUsed = this.getRecentlyUsed.bind(this);
     this.generateBlockData = this.generateBlockData.bind(this);

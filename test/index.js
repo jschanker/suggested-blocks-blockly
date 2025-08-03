@@ -21,9 +21,9 @@ import NaiveBayesClassifier from '../src/NaiveBayesClassifier';
  * @returns {!Blockly.WorkspaceSvg} The created workspace.
  */
 function createWorkspace(blocklyDiv, options) {
-  const workspace = Blockly.inject(blocklyDiv, options);
-  SuggestedBlocks.init(workspace);
-  return SuggestedBlocks.init(blocklyDiv, options);
+  const workspace = SuggestedBlocks.init(blocklyDiv, options);
+  Blockly.inject(blocklyDiv, options);
+  return workspace;
 }
 
 const customTheme = Blockly.Theme.defineTheme('classic_with_suggestions', {
