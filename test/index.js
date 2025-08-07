@@ -15,6 +15,42 @@ import trainingData from './training_data_kd.json';
 import NaiveBayesClassifier from '../src/NaiveBayesClassifier';
 
 /**
+ * Create blocks from JSON array.
+ * @param {Array<Object>} blockJsonArray The JSON block definitions.
+ * @returns {Array<Blockly.Block>} The created blocks.
+ */
+function createBlocksFromJson(blockJsonArray) {
+  const tempDiv = document.createElement('div');
+
+  const tempWorkspace = Blockly.inject(tempDiv, {
+    toolbox: {
+      kind: 'categoryToolbox',
+      contents: [],
+    },
+  });
+
+  const workspaceData = {blocks: {blocks: blockJsonArray}};
+  Blockly.serialization.workspaces.load(workspaceData, tempWorkspace);
+
+  const blocks = tempWorkspace.getAllBlocks();
+
+  tempWorkspace.dispose();
+  tempDiv.remove();
+
+  return blocks;
+}
+const transformedData = trainingData.map((item, index) => {
+  return {
+    description: item.description,
+    blocks: createBlocksFromJson(item.blocks.blocks),
+  };
+});
+
+const NaiveBayes = new NaiveBayesClassifier({});
+NaiveBayes.train(transformedData);
+console.log('Training completed with', transformedData.length, 'examples');
+
+/**
  * Create a workspace.
  * @param {HTMLElement} blocklyDiv The blockly container div.
  * @param {!Blockly.BlocklyOptions} options The Blockly options.
@@ -22,7 +58,12 @@ import NaiveBayesClassifier from '../src/NaiveBayesClassifier';
  */
 function createWorkspace(blocklyDiv, options) {
   const workspace = SuggestedBlocks.init(blocklyDiv, options);
-  Blockly.inject(blocklyDiv, options);
+
+  const workspaceDiv = blocklyDiv.querySelector('.injectionDiv');
+  if (workspaceDiv) {
+    workspaceDiv.style.height = '800px';
+    workspace.resizeContents();
+  }
   return workspace;
 }
 
@@ -39,33 +80,6 @@ const customTheme = Blockly.Theme.defineTheme('classic_with_suggestions', {
   fontStyle: {},
   startHats: null,
 });
-
-/**
- * Creates Blockly block instances from JSON block definitions by making a temporary workspace.
- * @param {Array} blockJsonArray - Array of JSON objects representing block definitions.
- * @returns {Array} Array of Blockly block instances.
- */
-function createBlocksFromJson(blockJsonArray) {
-  const tempDiv = document.createElement('div');
-  const tempWorkspace = Blockly.inject(tempDiv, {toolbox: toolboxCategories});
-
-  const workspaceData = {blocks: {blocks: blockJsonArray}};
-  Blockly.serialization.workspaces.load(workspaceData, tempWorkspace);
-
-  const blocks = tempWorkspace.getAllBlocks();
-  tempWorkspace.dispose();
-  tempDiv.remove();
-  return blocks;
-}
-
-const transformedData = trainingData.map((item) => ({
-  description: item.description,
-  blocks: createBlocksFromJson(item.blocks.blocks),
-}));
-
-const NaiveBayes = new NaiveBayesClassifier({});
-NaiveBayes.train(transformedData);
-console.log('Training completed with', transformedData.length, 'examples');
 
 document.addEventListener('DOMContentLoaded', async function () {
   // Insert two new categories

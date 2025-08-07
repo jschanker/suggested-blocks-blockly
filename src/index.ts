@@ -263,6 +263,7 @@ export class BlockSuggestor {
  * Main entry point to initialize the suggested blocks categories.
  *
  * @param workspaceOrContainer The workspace to load into, or the container to inject into.
+ * @param options Blockly options.
  * @param numBlocksPerCategory how many blocks should be included per
  * category. Defaults to 10.
  * @param waitForFinishedLoading whether to wait until we hear the
@@ -271,6 +272,7 @@ export class BlockSuggestor {
  */
 export const init = function (
   workspaceOrContainer: string | Element | Blockly.WorkspaceSvg,
+  options?: Blockly.BlocklyOptions,
   numBlocksPerCategory = 10,
   waitForFinishedLoading = true,
 ): Blockly.WorkspaceSvg {
@@ -302,29 +304,9 @@ export const init = function (
     button.style.marginBottom = '8px';
     container.appendChild(button);
 
-    button.addEventListener('click', () => {
-      const inputValue = input.value;
-      if (inputValue) {
-        if (suggestor.workspace) {
-          const flyout = suggestor.workspace.getFlyout();
-          if (flyout && flyout.show) {
-            flyout.show('AI_SUGGESTED');
-          } else {
-            console.error(
-              'Flyout or show method not available on workspaceSvg.',
-            );
-          }
-        } else {
-          console.error('Workspace not available on suggestor.');
-        }
-      } else {
-        alert('Please enter a problem to get suggestions.');
-      }
-    });
-
     const injectDiv = document.createElement('div');
     container.appendChild(injectDiv);
-    workspace = Blockly.inject(injectDiv, {}) as Blockly.WorkspaceSvg;
+    workspace = Blockly.inject(injectDiv, options) as Blockly.WorkspaceSvg;
   }
   const suggestor = new BlockSuggestor(
     numBlocksPerCategory,
@@ -346,6 +328,28 @@ export const init = function (
   if (!waitForFinishedLoading) suggestor.workspaceHasFinishedLoading = true;
   workspace.addChangeListener(suggestor.eventListener);
   suggestorLookup.set(workspace, suggestor);
+
+  if (inputSource && container) {
+    const button = container.querySelector('button');
+    if (button) {
+      button.addEventListener('click', () => {
+        const inputValue = inputSource.value;
+        if (inputValue) {
+          const flyout = workspace.getFlyout();
+          if (flyout && flyout.show) {
+            flyout.show('AI_SUGGESTED');
+          } else {
+            console.error(
+              'Flyout or show method not available on workspaceSvg.',
+            );
+          }
+        } else {
+          alert('Please enter a problem to get suggestions.');
+        }
+      });
+    }
+  }
+
   return workspace;
 };
 
