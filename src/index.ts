@@ -11,7 +11,7 @@ import * as Blockly from 'blockly/core';
 import IMachineLearningModel from './IMachineLearningModel';
 
 /** Map from workspaces to BlockSuggestor objects. */
-const suggestorLookup = new WeakMap<Blockly.Workspace, BlockSuggestor>();
+export const suggestorLookup = new WeakMap<Blockly.Workspace, BlockSuggestor>();
 
 /**
  * Class that tracks all blocks created in a workspace and suggests future
@@ -74,6 +74,8 @@ export class BlockSuggestor {
     inputSource: HTMLInputElement | null = null,
   ) {
     this.numBlocksPerCategory = numBlocksPerCategory;
+    this.workspace = workspace;
+    this.inputSource = inputSource;
 
     this.eventListener = this.eventListener.bind(this);
     this.getSuggestedBlocks = this.getSuggestedBlocks.bind(this);
@@ -108,7 +110,10 @@ export class BlockSuggestor {
       : [];
 
     const blockTypes = suggestedBlocks.map((block) => block.type);
-    return this.generateBlockData(blockTypes);
+
+    const result = this.generateBlockData(blockTypes);
+
+    return result;
   };
 
   /**

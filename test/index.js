@@ -11,7 +11,7 @@
 import * as Blockly from 'blockly';
 import {toolboxCategories, createPlayground} from '@blockly/dev-tools';
 import * as SuggestedBlocks from '../src/index';
-import trainingData from './training_data_kd.json';
+import trainingData from './training_data.json';
 import NaiveBayesClassifier from '../src/NaiveBayesClassifier';
 
 /**
@@ -112,6 +112,15 @@ document.addEventListener('DOMContentLoaded', async function () {
   );
 
   const testWorkspace = playground.getWorkspace();
+
+  const suggestor = SuggestedBlocks.suggestorLookup?.get(testWorkspace);
+
+  if (suggestor) {
+    suggestor.setModel(NaiveBayes);
+  } else {
+    console.error('❌ Could not find suggestor for workspace');
+  }
+
   const testDescription = 'print text';
   const suggestions = NaiveBayes.getSuggestedBlocks(
     testDescription,
