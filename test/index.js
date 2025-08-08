@@ -105,6 +105,15 @@ document.addEventListener('DOMContentLoaded', async function () {
     toolbox: toolboxCategories,
     theme: customTheme,
   };
+
+  localStorage.removeItem('playgroundState_@blockly/suggested-blocks');
+
+  Object.keys(localStorage).forEach((key) => {
+    if (key.startsWith('playgroundState_')) {
+      localStorage.removeItem(key);
+    }
+  });
+
   const playground = await createPlayground(
     document.getElementById('root'),
     createWorkspace,
@@ -118,7 +127,7 @@ document.addEventListener('DOMContentLoaded', async function () {
   if (suggestor) {
     suggestor.setModel(NaiveBayes);
   } else {
-    console.error('❌ Could not find suggestor for workspace');
+    console.error('Suggestor not found on workspace');
   }
 
   const testDescription = 'print text';

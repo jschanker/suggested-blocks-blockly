@@ -19,10 +19,6 @@ export const suggestorLookup = new WeakMap<Blockly.Workspace, BlockSuggestor>();
  */
 export class BlockSuggestor {
   /**
-   * Description for the suggestor
-   */
-  private description?: string;
-  /**
    * Machine learning model for block suggestions
    */
   private model: IMachineLearningModel | null = null;
@@ -60,7 +56,7 @@ export class BlockSuggestor {
    * Optional input description element or string
    */
   // eslint-disable-next-line @typescript-eslint/explicit-member-accessibility
-  public inputSource: HTMLInputElement | null = null;
+  public inputSource: HTMLInputElement | string | null = null;
   /**
    * Constructs a BlockSuggestor object.
    *
@@ -71,7 +67,7 @@ export class BlockSuggestor {
   constructor(
     numBlocksPerCategory: number,
     workspace: Blockly.WorkspaceSvg | null = null,
-    inputSource: HTMLInputElement | null = null,
+    inputSource: HTMLInputElement | string | null = null,
   ) {
     this.numBlocksPerCategory = numBlocksPerCategory;
     this.workspace = workspace;
@@ -99,8 +95,8 @@ export class BlockSuggestor {
   getSuggestedBlocks = (): Blockly.utils.toolbox.BlockInfo[] => {
     let description = '';
 
-    if (typeof this.description === 'string') {
-      description = this.description;
+    if (typeof this.inputSource === 'string') {
+      description = this.inputSource;
     } else if (this.inputSource instanceof HTMLInputElement) {
       description = this.inputSource.value || '';
     }
@@ -110,7 +106,6 @@ export class BlockSuggestor {
       : [];
 
     const blockTypes = suggestedBlocks.map((block) => block.type);
-
     const result = this.generateBlockData(blockTypes);
 
     return result;
@@ -288,12 +283,11 @@ export const init = function (
   if (workspaceOrContainer instanceof Blockly.WorkspaceSvg) {
     workspace = workspaceOrContainer;
   } else {
-    if (typeof workspaceOrContainer === 'string') {
-      container = document.getElementById(workspaceOrContainer);
-    } else if (workspaceOrContainer instanceof Element) {
-      container = workspaceOrContainer as HTMLElement;
-    }
-    if (!container) throw new Error('Invalid workspace container');
+    container =
+      typeof workspaceOrContainer === 'string'
+        ? document.getElementById(workspaceOrContainer) ||
+          document.querySelector(workspaceOrContainer)
+        : (workspaceOrContainer as HTMLElement);
 
     const input = document.createElement('input');
     input.type = 'text';
@@ -338,8 +332,15 @@ export const init = function (
     const button = container.querySelector('button');
     if (button) {
       button.addEventListener('click', () => {
-        const inputValue = inputSource.value;
-        if (inputValue) {
+        let inputValue = '';
+
+        if (typeof inputSource === 'string') {
+          inputValue = inputSource;
+        } else if (inputSource instanceof HTMLInputElement) {
+          inputValue = inputSource.value;
+        }
+
+        if (inputValue.trim()) {
           const flyout = workspace.getFlyout();
           if (flyout && flyout.show) {
             flyout.show('AI_SUGGESTED');
@@ -386,9 +387,20 @@ class BlockSuggestorSerializer implements Blockly.serialization.ISerializer {
    * Loads a serialized state into the target workspace.
    *
    * @param data the serialized state JSON
+   * @param data.defaultJsonForBlockLookup the lookup table for default block JSON
+   * @param data.recentlyUsedBlocks the list of recently used block types
    * @param workspace the workspace to load into
    */
-  load(data, workspace) {
+  load(
+    data: {
+      defaultJsonForBlockLookup: Record<
+        string,
+        Blockly.utils.toolbox.BlockInfo
+      >;
+      recentlyUsedBlocks: string[];
+    },
+    workspace: Blockly.Workspace,
+  ) {
     suggestorLookup.get(workspace)?.loadFromSerializedData(data);
   }
 
