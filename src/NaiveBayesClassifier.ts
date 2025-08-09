@@ -130,7 +130,11 @@ class NaiveBayesClassifier implements MachineLearningModel {
     }
     return blockTypeProbabilities
       .sort((prob1, prob2) => prob2.probability - prob1.probability)
-      .map((blocktype) => workspace.newBlock(blocktype.blockType));
+      .map((blocktype) => {
+        return {
+          type: blocktype.blockType,
+        } as unknown as Blockly.Block;
+      });
   }
 }
 

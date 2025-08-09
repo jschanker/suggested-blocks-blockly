@@ -246,14 +246,13 @@ export class BlockSuggestor {
       this.workspaceHasFinishedLoading &&
       (e as Blockly.Events.BlockCreate).json?.type
     ) {
-      const newBlockType = (e as Blockly.Events.BlockCreate).json.type;
+      const blockEvent = e as Blockly.Events.BlockCreate;
 
-      // If this is the first time creating this block, store its default
-      // configuration so we know how exactly to render it in the toolbox.
+      const newBlockType = blockEvent.json.type;
+
       if (!this.defaultJsonForBlockLookup[newBlockType]) {
-        this.defaultJsonForBlockLookup[newBlockType] = (
-          e as Blockly.Events.BlockCreate
-        ).json as Blockly.utils.toolbox.BlockInfo;
+        this.defaultJsonForBlockLookup[newBlockType] =
+          blockEvent.json as Blockly.utils.toolbox.BlockInfo;
       }
       this.recentlyUsedBlocks.unshift(newBlockType);
     }

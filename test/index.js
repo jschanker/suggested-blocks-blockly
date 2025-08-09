@@ -106,13 +106,30 @@ document.addEventListener('DOMContentLoaded', async function () {
     theme: customTheme,
   };
 
-  localStorage.removeItem('playgroundState_@blockly/suggested-blocks');
+  const playgroundKey = 'playgroundState_@blockly/suggested-blocks';
+  let savedSuggestorState = null;
 
-  Object.keys(localStorage).forEach((key) => {
-    if (key.startsWith('playgroundState_')) {
-      localStorage.removeItem(key);
+  const existingState = localStorage.getItem(playgroundKey);
+  if (existingState) {
+    try {
+      const parsed = JSON.parse(existingState);
+      console.log('Found existing state:', parsed);
+
+      if (parsed.workspaceJson) {
+        const workspaceData = JSON.parse(parsed.workspaceJson);
+        console.log('Workspace data:', workspaceData);
+
+        if (workspaceData['suggested-blocks']) {
+          savedSuggestorState = workspaceData['suggested-blocks'];
+          console.log('Saved suggestor state:', savedSuggestorState);
+        }
+      }
+    } catch (e) {
+      console.warn('Could not parse existing localStorage data:', e);
     }
-  });
+  }
+
+  localStorage.removeItem(playgroundKey);
 
   const playground = await createPlayground(
     document.getElementById('root'),
@@ -121,11 +138,16 @@ document.addEventListener('DOMContentLoaded', async function () {
   );
 
   const testWorkspace = playground.getWorkspace();
-
   const suggestor = SuggestedBlocks.suggestorLookup?.get(testWorkspace);
 
   if (suggestor) {
     suggestor.setModel(NaiveBayes);
+
+    if (savedSuggestorState) {
+      console.log('Restoring suggestor state');
+      suggestor.loadFromSerializedData(savedSuggestorState);
+      console.log('Suggestor state restored');
+    }
   } else {
     console.error('Suggestor not found on workspace');
   }
