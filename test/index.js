@@ -58,12 +58,7 @@ console.log('Training completed with', transformedData.length, 'examples');
  */
 function createWorkspace(blocklyDiv, options) {
   const workspace = SuggestedBlocks.init(blocklyDiv, options);
-
-  const workspaceDiv = blocklyDiv.querySelector('.injectionDiv');
-  if (workspaceDiv) {
-    workspaceDiv.style.height = '800px';
-    workspace.resizeContents();
-  }
+  Blockly.svgResize(workspace);
   return workspace;
 }
 
