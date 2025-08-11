@@ -385,22 +385,11 @@ class BlockSuggestorSerializer implements Blockly.serialization.ISerializer {
   /**
    * Loads a serialized state into the target workspace.
    *
-   * @param data the serialized state JSON
-   * @param data.defaultJsonForBlockLookup the lookup table for default block JSON
-   * @param data.recentlyUsedBlocks the list of recently used block types
+   * @param state the serialized state JSON
    * @param workspace the workspace to load into
    */
-  load(
-    data: {
-      defaultJsonForBlockLookup: Record<
-        string,
-        Blockly.utils.toolbox.BlockInfo
-      >;
-      recentlyUsedBlocks: string[];
-    },
-    workspace: Blockly.Workspace,
-  ) {
-    suggestorLookup.get(workspace)?.loadFromSerializedData(data);
+  load(state, workspace) {
+    suggestorLookup.get(workspace)?.loadFromSerializedData(state);
   }
 
   /**

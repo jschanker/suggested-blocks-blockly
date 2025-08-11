@@ -128,13 +128,27 @@ class NaiveBayesClassifier implements MachineLearningModel {
 
       blockTypeProbabilities.push({blockType, probability});
     }
-    return blockTypeProbabilities
-      .sort((prob1, prob2) => prob2.probability - prob1.probability)
-      .map((blocktype) => {
-        return {
-          type: blocktype.blockType,
-        } as unknown as Blockly.Block;
-      });
+    const tempDiv = document.createElement('div');
+    const tempWorkspace = Blockly.inject(tempDiv, {
+      toolbox: {
+        kind: 'categoryToolbox',
+        contents: [],
+      },
+      readOnly: true,
+      trashcan: false,
+      zoom: {controls: false, wheel: false},
+    });
+
+    try {
+      const blocks = blockTypeProbabilities
+        .sort((prob1, prob2) => prob2.probability - prob1.probability)
+        .map((blocktype) => tempWorkspace.newBlock(blocktype.blockType));
+
+      return blocks;
+    } finally {
+      tempWorkspace.dispose();
+      tempDiv.remove();
+    }
   }
 }
 
