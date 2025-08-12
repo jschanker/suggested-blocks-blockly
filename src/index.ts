@@ -301,7 +301,10 @@ export const init = function (
     button.style.display = 'block';
     button.style.marginBottom = '8px';
     container.appendChild(button);
-    workspace = Blockly.inject(workspaceOrContainer, options) as Blockly.WorkspaceSvg;
+    workspace = Blockly.inject(
+      workspaceOrContainer,
+      options,
+    ) as Blockly.WorkspaceSvg;
   }
   const suggestor = new BlockSuggestor(
     numBlocksPerCategory,
