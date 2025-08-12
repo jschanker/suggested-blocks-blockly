@@ -58,7 +58,6 @@ console.log('Training completed with', transformedData.length, 'examples');
  */
 function createWorkspace(blocklyDiv, options) {
   const workspace = SuggestedBlocks.init(blocklyDiv, options);
-  Blockly.svgResize(workspace);
   return workspace;
 }
 

@@ -288,23 +288,25 @@ export const init = function (
           document.querySelector(workspaceOrContainer)
         : (workspaceOrContainer as HTMLElement);
 
+    const inputButtonDiv = document.createElement('div');
+    inputButtonDiv.style.position = 'fixed';
+    inputButtonDiv.style.top = '0';
+    inputButtonDiv.style.right = '0';
+    inputButtonDiv.style.zIndex = '1000';
+
     const input = document.createElement('input');
     input.type = 'text';
     input.placeholder = 'Describe your problem...';
-    input.style.display = 'block';
-    input.style.marginBottom = '8px';
-    container.appendChild(input);
+    inputButtonDiv.appendChild(input);
     inputSource = input;
 
     const button = document.createElement('button');
     button.textContent = 'Get Suggested Blocks';
-    button.style.display = 'block';
-    button.style.marginBottom = '8px';
-    container.appendChild(button);
-    workspace = Blockly.inject(
-      workspaceOrContainer,
-      options,
-    ) as Blockly.WorkspaceSvg;
+    inputButtonDiv.appendChild(button);
+
+    container.appendChild(inputButtonDiv);
+
+    workspace = Blockly.inject(container, options) as Blockly.WorkspaceSvg;
   }
   const suggestor = new BlockSuggestor(
     numBlocksPerCategory,
