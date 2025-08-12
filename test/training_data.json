@@ -1,0 +1,1137 @@
+[
+  {
+    "description": "Print number of characters in a word",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "text_print",
+          "id": "Tyy70yD!F$#%FF;l/@HP",
+          "x": 213,
+          "y": 263,
+          "inputs": {
+            "TEXT": {
+              "shadow": {
+                "type": "text",
+                "id": "+]$zgg[%|8yMe[|%ajzG",
+                "fields": {
+                  "TEXT": "abc"
+                }
+              },
+              "block": {
+                "type": "text_length",
+                "id": "m8F@:loORir$9?C;U^GY",
+                "inputs": {
+                  "VALUE": {
+                    "shadow": {
+                      "type": "text",
+                      "id": "c4;xf174#8k[EPq_nF-A",
+                      "fields": {
+                        "TEXT": "text"
+                      }
+                    },
+                    "block": {
+                      "type": "text",
+                      "id": "Qy^@PGL]7$wd$r5y=U0E",
+                      "fields": {
+                        "TEXT": "word"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "description": "Prompt user for name and store it inside a variable",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "variables_set",
+          "id": "{F!#ktMP=TKdyH`,kqEl",
+          "x": 63,
+          "y": 188,
+          "fields": {
+            "VAR": {
+              "id": "3Bv3gN2?}gfju?,S^(r$"
+            }
+          },
+          "inputs": {
+            "VALUE": {
+              "block": {
+                "type": "text_prompt_ext",
+                "id": "*Z_)dB#rk;^,!m~e]%|N",
+                "extraState": "<mutation type=\"TEXT\"></mutation>",
+                "fields": {
+                  "TYPE": "TEXT"
+                },
+                "inputs": {
+                  "TEXT": {
+                    "shadow": {
+                      "type": "text",
+                      "id": "x+:Z3l6]p9h5bi8;]|nl",
+                      "fields": {
+                        "TEXT": "abc"
+                      }
+                    },
+                    "block": {
+                      "type": "text",
+                      "id": "S$S%vuEGX?%jxbu#7t1/",
+                      "fields": {
+                        "TEXT": "Input name:"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "variables": [
+      {
+        "name": "name",
+        "id": "3Bv3gN2?}gfju?,S^(r$"
+      }
+    ]
+  },
+  {
+    "description": "Print the position of the first 'a' in a specific word",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "text_print",
+          "id": "K2GG,(;NcB%=ar=:YKuC",
+          "x": 213,
+          "y": 313,
+          "inputs": {
+            "TEXT": {
+              "shadow": {
+                "type": "text",
+                "id": "7NrGVQqpE3tj+w8CQK*.",
+                "fields": {
+                  "TEXT": "abc"
+                }
+              },
+              "block": {
+                "type": "text_indexOf",
+                "id": "VP5AEB:{l?a-lxHB~4it",
+                "fields": {
+                  "END": "FIRST"
+                },
+                "inputs": {
+                  "VALUE": {
+                    "block": {
+                      "type": "variables_get",
+                      "id": "Kz!%o*IeMV_}RnL.2t?;",
+                      "fields": {
+                        "VAR": {
+                          "id": "-k2a*_DMoC`@}YdOO7[A"
+                        }
+                      }
+                    }
+                  },
+                  "FIND": {
+                    "shadow": {
+                      "type": "text",
+                      "id": "I_HGNd$_O%u!#.o-LS9.",
+                      "fields": {
+                        "TEXT": "a"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "variables": [
+      {
+        "name": "text",
+        "id": "-k2a*_DMoC`@}YdOO7[A"
+      }
+    ]
+  },
+  {
+    "description": "Count number of times the letter 'e' appears in a specific word",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "text_print",
+          "id": "(I4wb=Hyb)JwwI3IZMv/",
+          "x": 363,
+          "y": 288,
+          "inputs": {
+            "TEXT": {
+              "shadow": {
+                "type": "text",
+                "id": "cm|q*?U4Az/D:pgps2:}",
+                "fields": {
+                  "TEXT": "abc"
+                }
+              },
+              "block": {
+                "type": "text_count",
+                "id": "Y8-BVI*%hQ_]H]O2dyGs",
+                "inputs": {
+                  "SUB": {
+                    "shadow": {
+                      "type": "text",
+                      "id": "d^uC_)jDn1x-ZJK;tXs0",
+                      "fields": {
+                        "TEXT": "e"
+                      }
+                    }
+                  },
+                  "TEXT": {
+                    "shadow": {
+                      "type": "text",
+                      "id": "dS_d@2mHaV,`[?QbzeB.",
+                      "fields": {
+                        "TEXT": ""
+                      }
+                    },
+                    "block": {
+                      "type": "variables_get",
+                      "id": "CnR!3o%.?}E@@Y7l~`w=",
+                      "fields": {
+                        "VAR": {
+                          "id": "-k2a*_DMoC`@}YdOO7[A"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "variables": [
+      {
+        "name": "text",
+        "id": "-k2a*_DMoC`@}YdOO7[A"
+      }
+    ]
+  },
+  {
+    "description": "Print characters in position 1-3 in a specific word",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "text_print",
+          "id": "|9F@wJu6%zYlhkmY[7Ya",
+          "x": 38,
+          "y": 238,
+          "inputs": {
+            "TEXT": {
+              "shadow": {
+                "type": "text",
+                "id": "9T!.uuDf]IK)n%N577J]",
+                "fields": {
+                  "TEXT": "abc"
+                }
+              },
+              "block": {
+                "type": "text_getSubstring",
+                "id": "jg$p,$6tjf63l=xYQOc:",
+                "extraState": "<mutation at1=\"true\" at2=\"true\"></mutation>",
+                "fields": {
+                  "WHERE1": "FROM_START",
+                  "WHERE2": "FROM_START"
+                },
+                "inputs": {
+                  "STRING": {
+                    "block": {
+                      "type": "variables_get",
+                      "id": "ZbDOFW9T2+CA#:cTmPuK",
+                      "fields": {
+                        "VAR": {
+                          "id": "DEM.?{RtR,.*O:`yo54B"
+                        }
+                      }
+                    }
+                  },
+                  "AT1": {
+                    "block": {
+                      "type": "math_number",
+                      "id": "q!yshh1H6jNzpv-c5]AD",
+                      "fields": {
+                        "NUM": 1
+                      }
+                    }
+                  },
+                  "AT2": {
+                    "block": {
+                      "type": "math_number",
+                      "id": "5#iR;c0+gI[p)Kt:t!2%",
+                      "fields": {
+                        "NUM": 3
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "variables": [
+      {
+        "name": "text",
+        "id": "DEM.?{RtR,.*O:`yo54B"
+      }
+    ]
+  },
+  {
+    "description": "If string is empty, print Empty",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "controls_if",
+          "id": "Dp~3b,SEv=46=+t{/}I~",
+          "x": 38,
+          "y": 38,
+          "inputs": {
+            "IF0": {
+              "block": {
+                "type": "text_isEmpty",
+                "id": "^5By]DS);tnrU=EPm(KQ",
+                "inputs": {
+                  "VALUE": {
+                    "shadow": {
+                      "type": "text",
+                      "id": "0G8^3*8eMyrxv(V!XQ2E",
+                      "fields": {
+                        "TEXT": ""
+                      }
+                    },
+                    "block": {
+                      "type": "variables_get",
+                      "id": "aW?8[2l$UA%{WO8}/s]n",
+                      "fields": {
+                        "VAR": {
+                          "id": "DEM.?{RtR,.*O:`yo54B"
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "next": {
+            "block": {
+              "type": "text_print",
+              "id": "u)/L[C_kO/y`S_GkUa;H",
+              "inputs": {
+                "TEXT": {
+                  "shadow": {
+                    "type": "text",
+                    "id": "v-R1]5f/hx{}wM0~GlX@",
+                    "fields": {
+                      "TEXT": "Empty"
+                    }
+                  },
+                  "block": {
+                    "type": "text",
+                    "id": "ELGTS6}?}vDGo]rAf)Ik",
+                    "fields": {
+                      "TEXT": "Empty"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "variables": [
+      {
+        "name": "text",
+        "id": "DEM.?{RtR,.*O:`yo54B"
+      }
+    ]
+  },
+  {
+    "description": "Print a message",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "text_print",
+          "id": "S):UDQqP4)zd[mhVH673",
+          "x": 63,
+          "y": 63,
+          "inputs": {
+            "TEXT": {
+              "shadow": {
+                "type": "text",
+                "id": "D[Ek:}A5)O7ja}~r2e%A",
+                "fields": {
+                  "TEXT": "Hello!"
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "description": "Add two numbers",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "math_number",
+          "id": "1",
+          "x": 63,
+          "y": 63,
+          "fields": {
+            "NUM": 7
+          }
+        },
+        {
+          "type": "math_number",
+          "id": "2",
+          "x": 63,
+          "y": 113,
+          "fields": {
+            "NUM": 5
+          }
+        },
+        {
+          "type": "math_arithmetic",
+          "id": "3",
+          "x": 63,
+          "y": 163,
+          "inputs": {
+            "A": {
+              "shadow": {
+                "type": "math_number",
+                "id": "4",
+                "fields": {
+                  "NUM": 7
+                }
+              }
+            },
+            "B": {
+              "shadow": {
+                "type": "math_number",
+                "id": "5",
+                "fields": {
+                  "NUM": 5
+                }
+              }
+            }
+          },
+          "fields": {
+            "OP": "ADD"
+          }
+        },
+        {
+          "type": "text_print",
+          "id": "6",
+          "x": 63,
+          "y": 213,
+          "inputs": {
+            "TEXT": {
+              "value": {
+                "type": "math_arithmetic",
+                "id": "3"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "description": "Multiply two numbers",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "math_number",
+          "id": "7",
+          "x": 63,
+          "y": 63,
+          "fields": {
+            "NUM": 4
+          }
+        },
+        {
+          "type": "math_number",
+          "id": "8",
+          "x": 63,
+          "y": 113,
+          "fields": {
+            "NUM": 6
+          }
+        },
+        {
+          "type": "math_arithmetic",
+          "id": "9",
+          "x": 63,
+          "y": 163,
+          "inputs": {
+            "A": {
+              "shadow": {
+                "type": "math_number",
+                "id": "10",
+                "fields": {
+                  "NUM": 4
+                }
+              }
+            },
+            "B": {
+              "shadow": {
+                "type": "math_number",
+                "id": "11",
+                "fields": {
+                  "NUM": 6
+                }
+              }
+            }
+          },
+          "fields": {
+            "OP": "MULTIPLY"
+          }
+        },
+        {
+          "type": "text_print",
+          "id": "12",
+          "x": 63,
+          "y": 213,
+          "inputs": {
+            "TEXT": {
+              "value": {
+                "type": "math_arithmetic",
+                "id": "9"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "description": "Count down from a number",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "controls_for",
+          "id": "13",
+          "x": 63,
+          "y": 63,
+          "inputs": {
+            "FROM": {
+              "shadow": {
+                "type": "math_number",
+                "id": "14",
+                "fields": {
+                  "NUM": 5
+                }
+              }
+            },
+            "TO": {
+              "shadow": {
+                "type": "math_number",
+                "id": "15",
+                "fields": {
+                  "NUM": 1
+                }
+              }
+            },
+            "BY": {
+              "shadow": {
+                "type": "math_number",
+                "id": "16",
+                "fields": {
+                  "NUM": -1
+                }
+              }
+            }
+          },
+          "statements": {
+            "DO": {
+              "type": "text_print",
+              "id": "17",
+              "inputs": {
+                "TEXT": {
+                  "value": {
+                    "type": "variables_get",
+                    "id": "18"
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "description": "Join two text messages",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "text",
+          "id": "28",
+          "x": 63,
+          "y": 63,
+          "fields": {
+            "TEXT": "Good"
+          }
+        },
+        {
+          "type": "text",
+          "id": "29",
+          "x": 63,
+          "y": 113,
+          "fields": {
+            "TEXT": "Morning!"
+          }
+        },
+        {
+          "type": "text_join",
+          "id": "30",
+          "x": 63,
+          "y": 163,
+          "inputs": {
+            "ADD0": {
+              "value": {
+                "type": "text",
+                "id": "28"
+              }
+            },
+            "ADD1": {
+              "value": {
+                "type": "text",
+                "id": "29"
+              }
+            }
+          }
+        },
+        {
+          "type": "text_print",
+          "id": "31",
+          "x": 63,
+          "y": 213,
+          "inputs": {
+            "TEXT": {
+              "value": {
+                "type": "text_join",
+                "id": "30"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "description": "Subtract two numbers",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "math_number",
+          "id": "32",
+          "x": 63,
+          "y": 63,
+          "fields": {
+            "NUM": 12
+          }
+        },
+        {
+          "type": "math_number",
+          "id": "33",
+          "x": 63,
+          "y": 113,
+          "fields": {
+            "NUM": 4
+          }
+        },
+        {
+          "type": "math_arithmetic",
+          "id": "34",
+          "x": 63,
+          "y": 163,
+          "inputs": {
+            "A": {
+              "shadow": {
+                "type": "math_number",
+                "id": "35",
+                "fields": {
+                  "NUM": 12
+                }
+              }
+            },
+            "B": {
+              "shadow": {
+                "type": "math_number",
+                "id": "36",
+                "fields": {
+                  "NUM": 4
+                }
+              }
+            }
+          },
+          "fields": {
+            "OP": "SUBTRACT"
+          }
+        },
+        {
+          "type": "text_print",
+          "id": "37",
+          "x": 63,
+          "y": 213,
+          "inputs": {
+            "TEXT": {
+              "value": {
+                "type": "math_arithmetic",
+                "id": "34"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "description": "Divide two numbers",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "math_number",
+          "id": "38",
+          "x": 63,
+          "y": 63,
+          "fields": {
+            "NUM": 20
+          }
+        },
+        {
+          "type": "math_number",
+          "id": "39",
+          "x": 63,
+          "y": 113,
+          "fields": {
+            "NUM": 4
+          }
+        },
+        {
+          "type": "math_arithmetic",
+          "id": "40",
+          "x": 63,
+          "y": 163,
+          "inputs": {
+            "A": {
+              "shadow": {
+                "type": "math_number",
+                "id": "41",
+                "fields": {
+                  "NUM": 20
+                }
+              }
+            },
+            "B": {
+              "shadow": {
+                "type": "math_number",
+                "id": "42",
+                "fields": {
+                  "NUM": 4
+                }
+              }
+            }
+          },
+          "fields": {
+            "OP": "DIVIDE"
+          }
+        },
+        {
+          "type": "text_print",
+          "id": "43",
+          "x": 63,
+          "y": 213,
+          "inputs": {
+            "TEXT": {
+              "value": {
+                "type": "math_arithmetic",
+                "id": "40"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "description": "Calculate the square of a number",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "math_number",
+          "id": "44",
+          "x": 63,
+          "y": 63,
+          "fields": {
+            "NUM": 3
+          }
+        },
+        {
+          "type": "math_arithmetic",
+          "id": "45",
+          "x": 63,
+          "y": 113,
+          "inputs": {
+            "A": {
+              "shadow": {
+                "type": "math_number",
+                "id": "46",
+                "fields": {
+                  "NUM": 3
+                }
+              }
+            },
+            "B": {
+              "shadow": {
+                "type": "math_number",
+                "id": "47",
+                "fields": {
+                  "NUM": 3
+                }
+              }
+            }
+          },
+          "fields": {
+            "OP": "MULTIPLY"
+          }
+        },
+        {
+          "type": "text_print",
+          "id": "48",
+          "x": 63,
+          "y": 163,
+          "inputs": {
+            "TEXT": {
+              "value": {
+                "type": "math_arithmetic",
+                "id": "45"
+              }
+            }
+          }
+        }
+      ]
+    }
+  },
+  {
+    "description": "Get the last letter of a text input",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "variables_set",
+          "id": "3P`0$ELrs53K`2rhNM/_",
+          "x": -637,
+          "y": 63,
+          "fields": {
+            "VAR": {
+              "id": "|plj]6yG086!rV!`UKq*"
+            }
+          },
+          "inputs": {
+            "VALUE": {
+              "block": {
+                "type": "text_prompt_ext",
+                "id": "$vZxdWS5LO[gOr]:)s-2",
+                "extraState": "<mutation type=\"TEXT\"></mutation>",
+                "fields": {
+                  "TYPE": "TEXT"
+                },
+                "inputs": {
+                  "TEXT": {
+                    "shadow": {
+                      "type": "text",
+                      "id": "?2X(yC|]70k-g^n@yN|`",
+                      "fields": {
+                        "TEXT": "abc"
+                      }
+                    },
+                    "block": {
+                      "type": "text",
+                      "id": "{/PJ*{D@15A9gf|?MtR!",
+                      "fields": {
+                        "TEXT": ""
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "next": {
+            "block": {
+              "type": "text_print",
+              "id": "Xx[iO[W:g_QX}zp`wd@:",
+              "inputs": {
+                "TEXT": {
+                  "shadow": {
+                    "type": "text",
+                    "id": "x-Fv@VT(kb{f+1~5?-%)",
+                    "fields": {
+                      "TEXT": "abc"
+                    }
+                  },
+                  "block": {
+                    "type": "text_charAt",
+                    "id": "*;1eydda$?Q_-v]32j,p",
+                    "extraState": "<mutation at=\"false\"></mutation>",
+                    "fields": {
+                      "WHERE": "LAST"
+                    },
+                    "inputs": {
+                      "VALUE": {
+                        "block": {
+                          "type": "variables_get",
+                          "id": ",r|pnnAQ,!J3*Ha!P^L?",
+                          "fields": {
+                            "VAR": {
+                              "id": "|plj]6yG086!rV!`UKq*"
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "variables": [
+      {
+        "name": "text",
+        "id": "|plj]6yG086!rV!`UKq*"
+      }
+    ]
+  },
+  {
+    "description": "Get 3rd item in a list of inputs",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "variables_set",
+          "id": "]Nf%E,`Wgm`xLXb/%}L/",
+          "x": -762,
+          "y": 163,
+          "fields": {
+            "VAR": {
+              "id": "qTLspX#{dp.LzE~I`$(,"
+            }
+          },
+          "inputs": {
+            "VALUE": {
+              "block": {
+                "type": "lists_split",
+                "id": "H?Q)qE-a2AT!d!10C!L_",
+                "fields": {
+                  "MODE": "SPLIT"
+                },
+                "inputs": {
+                  "INPUT": {
+                    "block": {
+                      "type": "text_prompt_ext",
+                      "id": "#]1q%@g]*==91^-mf#IH",
+                      "extraState": "<mutation type=\"TEXT\"></mutation>",
+                      "fields": {
+                        "TYPE": "TEXT"
+                      },
+                      "inputs": {
+                        "TEXT": {
+                          "shadow": {
+                            "type": "text",
+                            "id": "bv=to]c}mUY9!Q58^)`?",
+                            "fields": {
+                              "TEXT": "abc"
+                            }
+                          },
+                          "block": {
+                            "type": "text",
+                            "id": "aXvT{1h]UDqu[Fv_F3yp",
+                            "fields": {
+                              "TEXT": ""
+                            }
+                          }
+                        }
+                      }
+                    }
+                  },
+                  "DELIM": {
+                    "shadow": {
+                      "type": "text",
+                      "id": "l7Lr~/=/dfim:$gg:sGJ",
+                      "fields": {
+                        "TEXT": ","
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "next": {
+            "block": {
+              "type": "text_print",
+              "id": "rhcD@*6(MFFzi]BaB0U=",
+              "inputs": {
+                "TEXT": {
+                  "shadow": {
+                    "type": "text",
+                    "id": "7PhKv?,wXWr%v:Iy4PU[",
+                    "fields": {
+                      "TEXT": "abc"
+                    }
+                  },
+                  "block": {
+                    "type": "lists_getIndex",
+                    "id": "=BQ85@U+Un*BF[M_HfZ{",
+                    "fields": {
+                      "MODE": "GET",
+                      "WHERE": "FROM_START"
+                    },
+                    "inputs": {
+                      "VALUE": {
+                        "block": {
+                          "type": "variables_get",
+                          "id": "*j=!WDBm0s}m]n0TlGT$",
+                          "fields": {
+                            "VAR": {
+                              "id": "qTLspX#{dp.LzE~I`$(,"
+                            }
+                          }
+                        }
+                      },
+                      "AT": {
+                        "block": {
+                          "type": "math_number",
+                          "id": "RWkACqD1nvNzXjJ~7h5;",
+                          "fields": {
+                            "NUM": 3
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    },
+    "variables": [
+      {
+        "name": "text",
+        "id": "|plj]6yG086!rV!`UKq*"
+      },
+      {
+        "name": "list",
+        "id": "qTLspX#{dp.LzE~I`$(,"
+      }
+    ]
+  },
+  {
+    "description": "Turn user input uppercase",
+    "blocks": {
+      "languageVersion": 0,
+      "blocks": [
+        {
+          "type": "text_print",
+          "id": "~EQs.#vM63rD0BxdDEzH",
+          "x": 263,
+          "y": 263,
+          "inputs": {
+            "TEXT": {
+              "shadow": {
+                "type": "text",
+                "id": "%?auz[76M|)wL[@sy(8+",
+                "fields": {
+                  "TEXT": "abc"
+                }
+              },
+              "block": {
+                "type": "text_changeCase",
+                "id": "R*Ar`8co)O`q$H!Kz^{8",
+                "fields": {
+                  "CASE": "UPPERCASE"
+                },
+                "inputs": {
+                  "TEXT": {
+                    "shadow": {
+                      "type": "text",
+                      "id": "7`;(Ij8L5%,839+Ty$R_",
+                      "fields": {
+                        "TEXT": "abc"
+                      }
+                    },
+                    "block": {
+                      "type": "text_prompt_ext",
+                      "id": "l,7Y93K94CK4X^df4v|k",
+                      "extraState": "<mutation type=\"TEXT\"></mutation>",
+                      "fields": {
+                        "TYPE": "TEXT"
+                      },
+                      "inputs": {
+                        "TEXT": {
+                          "shadow": {
+                            "type": "text",
+                            "id": "Y@^cehhV-IV]v;;`{$!D",
+                            "fields": {
+                              "TEXT": "abc"
+                            }
+                          },
+                          "block": {
+                            "type": "text",
+                            "id": "16/=[4o8A0_X@I~jTjKT",
+                            "fields": {
+                              "TEXT": "Type a sentence to make it uppercase."
+                            }
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+]

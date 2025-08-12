@@ -9,7 +9,10 @@
     "lint": "eslint .",
     "predeploy": "blockly-scripts predeploy",
     "start": "blockly-scripts start",
-    "test": "blockly-scripts test"
+    "test": "blockly-scripts test",
+    "test:jest": "jest",
+    "format": "prettier --write '**/*.{js,jsx,ts,tsx,json,css,md}'",
+    "check-format": "prettier --check '**/*.{js,jsx,ts,tsx,json,css,md}'"
   },
   "main": "./dist/index.js",
   "module": "./src/index.js",
@@ -42,14 +45,21 @@
   "devDependencies": {
     "@blockly/dev-scripts": "^4.0.1",
     "@blockly/dev-tools": "^8.0.6",
+    "@eslint/js": "^9.17.0",
+    "@types/jest": "^29.5.14",
     "chai": "^5.1.1",
-    "eslint": "^8.4.1",
+    "eslint": "^8.57.1",
     "eslint-config-google": "^0.14.0",
     "eslint-config-prettier": "^9.0.0",
     "eslint-plugin-jsdoc": "^48.0.2",
-    "prettier": "^3.3.3",
+    "globals": "^15.13.0",
+    "jest": "^29.7.0",
+    "prettier": "^3.5.3",
     "sinon": "^14.0.0",
-    "typescript": "^5.3.3"
+    "ts-jest": "^29.2.5",
+    "ts-loader": "^9.5.2",
+    "typescript": "^5.7.3",
+    "typescript-eslint": "^8.18.0"
   },
   "peerDependencies": {
     "blockly": "^11.0.0"
@@ -60,5 +70,8 @@
   },
   "engines": {
     "node": ">=8.17.0"
+  },
+  "dependencies": {
+    "@blockly/suggested-blocks": "file:"
   }
 }
