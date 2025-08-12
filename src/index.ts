@@ -61,7 +61,7 @@ export class BlockSuggestor {
    * Constructs a BlockSuggestor object.
    *
    * @param numBlocksPerCategory the size of each toolbox category
-   * @param workspace new workspace
+   * @param workspace workspace instance associated with this BlockSuggestor
    * @param inputSource optional input description element or string
    */
   constructor(
@@ -249,7 +249,8 @@ export class BlockSuggestor {
       const blockEvent = e as Blockly.Events.BlockCreate;
 
       const newBlockType = blockEvent.json.type;
-
+      // If this is the first time creating this block, store its default
+      // configuration so we know how exactly to render it in the toolbox.
       if (!this.defaultJsonForBlockLookup[newBlockType]) {
         this.defaultJsonForBlockLookup[newBlockType] =
           blockEvent.json as Blockly.utils.toolbox.BlockInfo;
@@ -262,7 +263,7 @@ export class BlockSuggestor {
  * Main entry point to initialize the suggested blocks categories.
  *
  * @param workspaceOrContainer The workspace to load into, or the container to inject into.
- * @param options Blockly options.
+ * @param options options for Blockly.inject.
  * @param numBlocksPerCategory how many blocks should be included per
  * category. Defaults to 10.
  * @param waitForFinishedLoading whether to wait until we hear the
